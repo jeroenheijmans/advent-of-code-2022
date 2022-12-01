@@ -13,7 +13,7 @@ So this repository will contain a mixture of solutions, probably starting with s
 
 Here's something I learned for the various days of advent:
 
-1. Puzzle still TODO!
+1. Too much prep can *hurt*.
 2. Puzzle still TODO!
 3. Puzzle still TODO!
 4. Puzzle still TODO!
