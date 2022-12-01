@@ -2265,19 +2265,21 @@ let data = input
 let part1 = 0;
 let part2 = 0;
 
-let temp = 0;
+let temp = 0, results = [];
 for (let i = 0; i < data.length; i++) {
-  console.log('now', temp);
   if (data[i] === null) {
     part1 = Math.max(temp, part1);
-  console.log('found', part1);
-  temp = 0;
+    results.push(temp);
+    temp = 0;
   } else {
     temp += data[i];
   }
 }
 
-part1 = Math.max(temp, part1);
+results = results.sort((a, b) => a - b);
+part1 = results[results.length - 1];
+part2 = results[results.length - 1] + results[results.length - 2] + results[results.length - 3];
+console.log(results);
 
 console.log("Part 1:", part1);
 console.log("Part 2:", part2);
