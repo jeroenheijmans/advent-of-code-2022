@@ -2256,28 +2256,21 @@ const input = `
 9333
 `;
 
+const sum = (prev, curr) => prev + curr;
+
 let data = input
   .trim()
-  .split(/\r?\n/)
+  .split(/\r?\n\r?\n/)
+  .map(elf => elf
+    .split(/\r?\n/)
+    .map(x => parseInt(x))
+    .reduce(sum, 0)
+  )
+  .sort((a,b) => a-b)
   ;
 
-let part1 = 0;
-let part2 = 0;
-
-let temp = 0, results = [];
-for (let i = 0; i < data.length; i++) {
-  if (!data[i]) {
-    part1 = Math.max(temp, part1);
-    results.push(temp);
-    temp = 0;
-  } else {
-    temp += parseInt(data[i]);
-  }
-}
-
-results = results.sort((a, b) => a - b);
-part1 = results.at(-1);
-part2 = results.at(-1) + results.at(-2) + results.at(-3);
+let part1 = data.at(-1);
+let part2 = data.slice(-3).reduce(sum, 0);
 
 console.log("Part 1:", part1);
 console.log("Part 2:", part2);
