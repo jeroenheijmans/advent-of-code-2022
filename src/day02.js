@@ -2513,7 +2513,6 @@ let part2= 0;
 
 
 for (let i = 0; i < data.length; i++) {
-  console.log(i, part1);
   if (data[i][1] === "X") part1 += 1;
   if (data[i][1] === "Y") part1 += 2;
   if (data[i][1] === "Z") part1 += 3;
@@ -2531,8 +2530,38 @@ for (let i = 0; i < data.length; i++) {
   if (data[i][0] === "C" && data[i][1] === "X") part1 += 6;
   if (data[i][0] === "C" && data[i][1] === "Y") part1 += 0;
 }
-console.log(part1);
 
+
+
+for (let i = 0; i < data.length; i++) {
+  let chosen = "";
+  if (data[i][0] === "A" && data[i][1] === "X") { chosen = "Z"; }
+  if (data[i][0] === "B" && data[i][1] === "X") { chosen = "X"; }
+  if (data[i][0] === "C" && data[i][1] === "X") { chosen = "Y"; }
+  if (data[i][0] === "A" && data[i][1] === "Y") { chosen = "X"; }
+  if (data[i][0] === "B" && data[i][1] === "Y") { chosen = "Y"; }
+  if (data[i][0] === "C" && data[i][1] === "Y") { chosen = "Z"; }
+  if (data[i][0] === "A" && data[i][1] === "Z") { chosen = "Y"; }
+  if (data[i][0] === "B" && data[i][1] === "Z") { chosen = "Z"; }
+  if (data[i][0] === "C" && data[i][1] === "Z") { chosen = "X"; }
+
+  if (chosen === "X") part2 += 1;
+  if (chosen === "Y") part2 += 2;
+  if (chosen === "Z") part2 += 3;
+
+  if (data[i][0] === "A" && chosen === "X") { part2 += 3; continue; }
+  if (data[i][0] === "B" && chosen === "Y") { part2 += 3; continue; }
+  if (data[i][0] === "C" && chosen === "Z") { part2 += 3; continue; }
+
+  if (data[i][0] === "A" && chosen === "Y") part2 += 6;
+  if (data[i][0] === "A" && chosen === "Z") part2 += 0;
+  
+  if (data[i][0] === "B" && chosen === "X") part2 += 0;
+  if (data[i][0] === "B" && chosen === "Z") part2 += 6;
+  
+  if (data[i][0] === "C" && chosen === "X") part2 += 6;
+  if (data[i][0] === "C" && chosen === "Y") part2 += 0;
+}
 
 console.log("Part 1:", part1);
 console.log("Part 2:", part2);
