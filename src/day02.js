@@ -2503,6 +2503,9 @@ B Y
 
 const data = input
   .trim()
+  .replaceAll("X", "A")
+  .replaceAll("Y", "B")
+  .replaceAll("Z", "C")
   .split(/\r?\n/)
   .filter(x => !!x)
   .map(x => x.split(" "))
@@ -2511,57 +2514,45 @@ const data = input
 let part1 = 0;
 let part2= 0;
 
+const winsOver = {
+  "A": ["C"],
+  "B": ["A"],
+  "C": ["B"],
+};
 
-for (let i = 0; i < data.length; i++) {
-  if (data[i][1] === "X") part1 += 1;
-  if (data[i][1] === "Y") part1 += 2;
-  if (data[i][1] === "Z") part1 += 3;
-
-  if (data[i][0] === "A" && data[i][1] === "X") { part1 += 3; continue; }
-  if (data[i][0] === "B" && data[i][1] === "Y") { part1 += 3; continue; }
-  if (data[i][0] === "C" && data[i][1] === "Z") { part1 += 3; continue; }
-
-  if (data[i][0] === "A" && data[i][1] === "Y") part1 += 6;
-  if (data[i][0] === "A" && data[i][1] === "Z") part1 += 0;
-  
-  if (data[i][0] === "B" && data[i][1] === "X") part1 += 0;
-  if (data[i][0] === "B" && data[i][1] === "Z") part1 += 6;
-  
-  if (data[i][0] === "C" && data[i][1] === "X") part1 += 6;
-  if (data[i][0] === "C" && data[i][1] === "Y") part1 += 0;
+function score(player1, player2) {
+  if (player1 === player2) return 3;
+  if (winsOver[player1].includes(player2)) return 0;
+  if (winsOver[player2].includes(player1)) return 6;
+  throw new Error(`Unexpected combo of ${player1} and ${player2}`);
 }
 
+function bonus(chosen) {
+  if (chosen === "A") return 1;
+  if (chosen === "B") return 2;
+  if (chosen === "C") return 3;
+}
 
+data.forEach(([player1, player2]) => {
+  part1 += bonus(player2);
+  part1 += score(player1, player2);
+});
 
-for (let i = 0; i < data.length; i++) {
+data.forEach(([player1, player2]) => {
   let chosen = "";
-  if (data[i][0] === "A" && data[i][1] === "X") { chosen = "Z"; }
-  if (data[i][0] === "B" && data[i][1] === "X") { chosen = "X"; }
-  if (data[i][0] === "C" && data[i][1] === "X") { chosen = "Y"; }
-  if (data[i][0] === "A" && data[i][1] === "Y") { chosen = "X"; }
-  if (data[i][0] === "B" && data[i][1] === "Y") { chosen = "Y"; }
-  if (data[i][0] === "C" && data[i][1] === "Y") { chosen = "Z"; }
-  if (data[i][0] === "A" && data[i][1] === "Z") { chosen = "Y"; }
-  if (data[i][0] === "B" && data[i][1] === "Z") { chosen = "Z"; }
-  if (data[i][0] === "C" && data[i][1] === "Z") { chosen = "X"; }
+  if (player1 === "A" && player2 === "A") { chosen = "C"; }
+  if (player1 === "B" && player2 === "A") { chosen = "A"; }
+  if (player1 === "C" && player2 === "A") { chosen = "B"; }
+  if (player1 === "A" && player2 === "B") { chosen = "A"; }
+  if (player1 === "B" && player2 === "B") { chosen = "B"; }
+  if (player1 === "C" && player2 === "B") { chosen = "C"; }
+  if (player1 === "A" && player2 === "C") { chosen = "B"; }
+  if (player1 === "B" && player2 === "C") { chosen = "C"; }
+  if (player1 === "C" && player2 === "C") { chosen = "A"; }
 
-  if (chosen === "X") part2 += 1;
-  if (chosen === "Y") part2 += 2;
-  if (chosen === "Z") part2 += 3;
-
-  if (data[i][0] === "A" && chosen === "X") { part2 += 3; continue; }
-  if (data[i][0] === "B" && chosen === "Y") { part2 += 3; continue; }
-  if (data[i][0] === "C" && chosen === "Z") { part2 += 3; continue; }
-
-  if (data[i][0] === "A" && chosen === "Y") part2 += 6;
-  if (data[i][0] === "A" && chosen === "Z") part2 += 0;
-  
-  if (data[i][0] === "B" && chosen === "X") part2 += 0;
-  if (data[i][0] === "B" && chosen === "Z") part2 += 6;
-  
-  if (data[i][0] === "C" && chosen === "X") part2 += 6;
-  if (data[i][0] === "C" && chosen === "Y") part2 += 0;
-}
+  part2 += bonus(chosen);
+  part2 += score(player1, chosen);
+});
 
 console.log("Part 1:", part1);
 console.log("Part 2:", part2);
