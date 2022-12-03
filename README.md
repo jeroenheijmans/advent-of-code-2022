@@ -15,7 +15,7 @@ Here's something I learned for the various days of advent:
 
 1. Too much prep can *hurt*.
 2. Straightforward *can* work.
-3. Puzzle still TODO!
+3. Reading comprehension is hard.
 4. Puzzle still TODO!
 5. Puzzle still TODO!
 6. Puzzle still TODO!
