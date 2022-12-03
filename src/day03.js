@@ -305,19 +305,41 @@ const data = input
   .trim()
   .split(/\r?\n/)
   .filter(x => !!x)
-  .map(x => [x.slice(0, x.length / 2).split(""), x.slice(x.length / 2).split("")])
   ;
 
 let part1 = 0;
 let part2 = 0;
 
-data.forEach(line => {
-  const duplicate = line[0].filter(x => line[1].includes(x))[0];
+function score(duplicate) {
   const asciiCode = duplicate.charCodeAt(0);
   const offset = asciiCode > 90 ? -96 : (-64 + 26);
-  const score = asciiCode + offset;
-  part1 += score;
-});
+  return asciiCode + offset;
+}
+
+data
+  .map(x => [x.slice(0, x.length / 2).split(""), x.slice(x.length / 2).split("")])
+  .forEach(line => {
+    const duplicate = line[0].filter(x => line[1].includes(x))[0];
+    part1 += score(duplicate);
+  });
+
+let elves = data.map(e => e.split(""));
+
+while (elves.length > 0) {
+  const elf1 = elves[0];
+  elves.splice(elves.indexOf(elf1), 1);
+  
+  const elf2 = elves.find(e => e.find(c => elf1.includes(c)));
+  elves.splice(elves.indexOf(elf2), 1);
+
+  const commonCharacter = elf1.find(c => elf2.includes(c));
+  
+  const elf3 = elves.find(e => e.includes(commonCharacter));
+  elves.splice(elves.indexOf(elf3), 1);
+
+  part2 += score(commonCharacter);
+}
+
 
 console.log("Part 1:", part1);
 console.log("Part 2:", part2);
