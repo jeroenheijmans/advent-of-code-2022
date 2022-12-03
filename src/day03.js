@@ -1,4 +1,4 @@
-const input = `
+let input = `
 LdHVLDLDdHdtLMhcqCqGWcWg
 ZZQZSZnnJrQrJQJbfzfnWGWPWMcChMMPcqMnhFcF
 ZrzpWzfbpQpWbzvZWZpdtVtDNmRHNVptNDHt
@@ -301,6 +301,15 @@ btJzJbVNdBJJtzTdGBbdBztGrQhhQWhMwHrhrHSHgHQfhMVS
 JJDpdDTtCtzNptnTJBznnvLCCvcFqsRqFcvZclLGRR
 `;
 
+input2 = `
+vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw
+`;
+
 const data = input
   .trim()
   .split(/\r?\n/)
@@ -326,20 +335,13 @@ data
 let elves = data.map(e => e.split(""));
 
 while (elves.length > 0) {
-  const elf1 = elves[0];
-  elves.splice(elves.indexOf(elf1), 1);
-  
-  const elf2 = elves.find(e => e.find(c => elf1.includes(c)));
-  elves.splice(elves.indexOf(elf2), 1);
+  const elf1 = elves.pop();
+  const elf2 = elves.pop();
+  const elf3 = elves.pop();
 
-  const commonCharacter = elf1.find(c => elf2.includes(c));
-  
-  const elf3 = elves.find(e => e.includes(commonCharacter));
-  elves.splice(elves.indexOf(elf3), 1);
-
+  const commonCharacter = elf1.find(c => elf2.includes(c) && elf3.includes(c));
   part2 += score(commonCharacter);
 }
-
 
 console.log("Part 1:", part1);
 console.log("Part 2:", part2);
