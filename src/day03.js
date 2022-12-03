@@ -301,15 +301,6 @@ btJzJbVNdBJJtzTdGBbdBztGrQhhQWhMwHrhrHSHgHQfhMVS
 JJDpdDTtCtzNptnTJBznnvLCCvcFqsRqFcvZclLGRR
 `;
 
-input2 = `
-vJrwpWtwJgWrhcsFMMfFFhFp
-jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-PmmdzqPrVvPwwTWBwg
-wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-ttgJtRGJQctTZtZT
-CrZsJsPPZsGzwwsLwLmpwMDw
-`;
-
 const data = input
   .trim()
   .split(/\r?\n/)
@@ -321,8 +312,8 @@ let part2 = 0;
 
 function score(duplicate) {
   const asciiCode = duplicate.charCodeAt(0);
-  const offset = asciiCode > 90 ? -96 : (-64 + 26);
-  return asciiCode + offset;
+  const offset = asciiCode > 90 ? "a".charCodeAt(0) : "A".charCodeAt(0) - 26;
+  return asciiCode - offset + 1;
 }
 
 data
