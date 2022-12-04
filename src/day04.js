@@ -1001,6 +1001,7 @@ const input = `
 87-90,89-90
 `;
 
+
 const data = input
   .trim()
   .split(/\r?\n/)
@@ -1016,7 +1017,17 @@ const fullyContains = (first, second) => first[0] <= second[0] && first[1] >= se
 data.forEach(row => {
   if (fullyContains(row[0], row[1])) part1++;
   else if (fullyContains(row[1], row[0])) part1++;
-})
+});
+
+const overlaps = (first, second) => 
+  (first[0] >= second[0] && first[0] <= second[1])
+  ||
+  (first[1] >= second[0] && first[1] <= second[1]);
+
+data.forEach(row => {
+  if (overlaps(row[0], row[1])) part2++;
+  else if (overlaps(row[1], row[0])) part2++;
+});
 
 console.log("Part 1:", part1);
 console.log("Part 2:", part2);
