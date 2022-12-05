@@ -544,8 +544,6 @@ const instructions = text2
   .map(x => ({ count: x[0], from: x[1], to: x[2] }));
 
 instructions.forEach(instruction => {
-  // // console.log(arrangements);
-  // // console.log("moving", instruction.count, "from", instruction.from, "to", instruction.to);
   for (let i = 0; i < instruction.count; i++) {
     const temp = arrangements[instruction.from].pop();
     arrangements[instruction.to].push(temp);
@@ -557,12 +555,9 @@ arrangements.forEach(a => part1 += a.pop() || "");
 
 arrangements = parseArrangements(text1);
 instructions.forEach(instruction => {
-  // console.log(arrangements);
-  // console.log("moving", instruction.count, "from", instruction.from, "to", instruction.to);
   const from = arrangements[instruction.from];
   const to = arrangements[instruction.to];
   const temp = from.splice(from.length - instruction.count, instruction.count);
-  // console.log("instruction", instruction, " => ", temp);
   arrangements[instruction.to] = to.concat(temp);
 });
 
