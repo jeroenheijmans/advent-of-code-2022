@@ -512,8 +512,6 @@ move 14 from 1 to 8
 move 14 from 7 to 1
 move 4 from 6 to 5
 move 1 from 1 to 9
-
-
 `;
 
 function parseArrangements(text) {
@@ -537,27 +535,39 @@ const [text1, text2] = input
   .split(/\r?\n\r?\n/)
   ;
 
-const arrangements = parseArrangements(text1);
+let arrangements = parseArrangements(text1);
 const instructions = text2
   .replaceAll(/(move )|(from )|(to )/g, "")
   .split(/\r?\n/)
+  .filter(x => !!x)
   .map(x => x.split(" "))
   .map(x => ({ count: x[0], from: x[1], to: x[2] }));
 
 instructions.forEach(instruction => {
-  // console.log(arrangements);
-  // console.log("moving", instruction.count, "from", instruction.from, "to", instruction.to);
+  // // console.log(arrangements);
+  // // console.log("moving", instruction.count, "from", instruction.from, "to", instruction.to);
   for (let i = 0; i < instruction.count; i++) {
     const temp = arrangements[instruction.from].pop();
     arrangements[instruction.to].push(temp);
   }
 });
 
-
 let part1 = "";
-let part2 = 0;
-
 arrangements.forEach(a => part1 += a.pop() || "");
+
+arrangements = parseArrangements(text1);
+instructions.forEach(instruction => {
+  // console.log(arrangements);
+  // console.log("moving", instruction.count, "from", instruction.from, "to", instruction.to);
+  const from = arrangements[instruction.from];
+  const to = arrangements[instruction.to];
+  const temp = from.splice(from.length - instruction.count, instruction.count);
+  // console.log("instruction", instruction, " => ", temp);
+  arrangements[instruction.to] = to.concat(temp);
+});
+
+let part2 = "";
+arrangements.forEach(a => part2 += a.pop() || "");
 
 console.log("Part 1:", part1);
 console.log("Part 2:", part2);
