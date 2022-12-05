@@ -4,10 +4,9 @@ Solutions to [the 2022 edition of Advent of Code](https://adventofcode.com/2022)
 
 ## About this repository
 
-This year real life is a bit hectic!
-My plan is to learn *some* Kotlin with Advent of Code.
-But in the first few days I also love to have a shot at the leaderboard.
-So this repository will contain a mixture of solutions, probably starting with some JavaScript before moving on to Kotlin.
+My intenion was to learn and practice Kotlin this year.
+Real life happened, so here I am, using and abusing JavaScript.
+It is what it is!
 
 ## Lessons Learned
 
@@ -17,7 +16,7 @@ Here's something I learned for the various days of advent:
 2. Straightforward *can* work.
 3. Reading comprehension is hard.
 4. Programming is a skill *and* a craft.
-5. Puzzle still TODO!
+5. Input parsing is a lot of work.
 6. Puzzle still TODO!
 7. Puzzle still TODO!
 8. Puzzle still TODO!
@@ -53,4 +52,4 @@ Here's direct links to every year's solutions I have so far:
 - [Advent of Code 2019 solutions](https://github.com/jeroenheijmans/advent-of-code-2019), in Python
 - [Advent of Code 2020 solutions](https://github.com/jeroenheijmans/advent-of-code-2020), in TypeScript
 - [Advent of Code 2021 solutions](https://github.com/jeroenheijmans/advent-of-code-2021), in PHP (and a tiny bit of C#)
-- [Advent of Code 2022 solutions](https://github.com/jeroenheijmans/advent-of-code-2022), in Kotlin (and some JavaScript)
+- [Advent of Code 2022 solutions](https://github.com/jeroenheijmans/advent-of-code-2022), in JavaScript
