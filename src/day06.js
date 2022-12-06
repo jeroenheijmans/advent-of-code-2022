@@ -9,8 +9,8 @@ const data = input.split("");
 
 for (let i=4; i<data.length; i++) {
   const piece = input.slice(0, i);
-  const last4 = piece.slice(-4);
-  if (new Set(last4).size === 4) {
+  const considered = piece.slice(-4);
+  if (new Set(considered).size === 4) {
     part1 = piece.length;
     break;
   }
@@ -18,8 +18,8 @@ for (let i=4; i<data.length; i++) {
 
 for (let i=4; i<data.length; i++) {
   const piece = input.slice(0, i);
-  const last4 = piece.slice(-14);
-  if (new Set(last4).size === 14) {
+  const considered = piece.slice(-14);
+  if (new Set(considered).size === 14) {
     part2 = piece.length;
     break;
   }
