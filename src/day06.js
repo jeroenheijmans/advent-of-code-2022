@@ -16,5 +16,14 @@ for (let i=4; i<data.length; i++) {
   }
 }
 
+for (let i=4; i<data.length; i++) {
+  const piece = input.slice(0, i);
+  const last4 = piece.slice(-14);
+  if (new Set(last4).size === 14) {
+    part2 = piece.length;
+    break;
+  }
+}
+
 console.log("Part 1:", part1);
 console.log("Part 2:", part2);
