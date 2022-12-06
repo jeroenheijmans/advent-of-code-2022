@@ -17,7 +17,7 @@ Here's something I learned for the various days of advent:
 3. Reading comprehension is hard.
 4. Programming is a skill *and* a craft.
 5. Input parsing is a lot of work.
-6. Puzzle still TODO!
+6. Detailed knowledge is useful in detailed situations.
 7. Puzzle still TODO!
 8. Puzzle still TODO!
 9. Puzzle still TODO!
