@@ -1076,25 +1076,25 @@ let pwd = tree;
 
 data.forEach(line => {
   if (line === "$ cd /") {
-    console.log("Moving to root");
+    // console.log("Moving to root");
     pwd = tree;
   }
   else if (line === "$ cd ..") {
-    console.log("Moving up folder");
+    // console.log("Moving up folder");
     pwd = pwd.parent;
   }
   else if (line.substring(0, 5) === "$ cd ") {
-    console.log("Moving into folder");
+    // console.log("Moving into folder");
     const target = line.split("$ cd ")[1];
     pwd.folders[target] = pwd.folders[target] || { parent: pwd, name: target, folders: {}, files: [] };
     pwd = pwd.folders[target];
   }
   else if (line.substring(0, 4) === "$ ls") {
-    console.log("Ignoring ls command");
+    // console.log("Ignoring ls command");
     // no action needed, only command
   }
   else if (line.match(/\d+ .+/)) {
-    console.log("Seeing a file!");
+    // console.log("Seeing a file!");
     const size = parseInt(line.split(" ")[0]);
     const name = line.split(" ")[1];
     pwd.files.push({ name, size });
@@ -1107,7 +1107,7 @@ data.forEach(line => {
   }
 });
 
- console.dir(tree, { depth: 8 })
+ // console.dir(tree, { depth: 8 })
 
 let part1 = 0;
 let part2 = 0;
@@ -1126,6 +1126,13 @@ console.log(flatSizes);
 
 part1 = flatSizes.filter(x => x < 100000).reduce((a,b) => a+b, 0);
 
-// Not correct: 1414917 (too low)
+const used = recursiveSize(tree);
+const free = 70000000 - used;
+const needed = free - 30000000;
+
+console.log(flatSizes.filter(x => x >= needed).sort((a,b) => a-b));
+
 console.log("Part 1:", part1);
+
+// Not 4482, too low
 console.log("Part 2:", part2);
