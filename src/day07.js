@@ -1107,11 +1107,6 @@ data.forEach(line => {
   }
 });
 
- // console.dir(tree, { depth: 8 })
-
-let part1 = 0;
-let part2 = 0;
-
 let flatSizes = [];
 function recursiveSize(pwd) {
   return pwd.files.reduce((a,b) => a + b.size, 0)
@@ -1122,21 +1117,13 @@ function walk(pwd) {
   Object.keys(pwd.folders).forEach(x => walk(pwd.folders[x]));
 }
 walk(tree);
-console.log(flatSizes);
 
-part1 = flatSizes.filter(x => x < 100000).reduce((a,b) => a+b, 0);
+const part1 = flatSizes.filter(x => x < 100000).reduce((a,b) => a+b, 0);
 
 const used = recursiveSize(tree);
 const free = 70000000 - used;
 const needed = 30000000 - free;
-
-console.log(flatSizes.filter(x => x >= needed).sort((a,b) => a-b));
-
-console.log("Used", used);
-console.log("Free", free);
-console.log("Needed", needed);
+const part2 = flatSizes.filter(x => x >= needed).sort((a,b) => a-b)[0];
 
 console.log("Part 1:", part1);
-
-// Not 4482, too low
 console.log("Part 2:", part2);
