@@ -1128,9 +1128,13 @@ part1 = flatSizes.filter(x => x < 100000).reduce((a,b) => a+b, 0);
 
 const used = recursiveSize(tree);
 const free = 70000000 - used;
-const needed = free - 30000000;
+const needed = 30000000 - free;
 
 console.log(flatSizes.filter(x => x >= needed).sort((a,b) => a-b));
+
+console.log("Used", used);
+console.log("Free", free);
+console.log("Needed", needed);
 
 console.log("Part 1:", part1);
 
