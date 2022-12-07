@@ -1071,85 +1071,60 @@ const data = input
   .map(x => x)
   ;
 
-let tree = { name: "/", directSize: 0, children: [], };
+let tree = { name: "/", folders: { }, files: [] };
 let pwd = tree;
 
-data.forEach(command => {
-  const ogCommand = command;
-
-  if (command === "$ cd /") {
-    console.log(ogCommand.padEnd(20, " "), "Go to root");
+data.forEach(line => {
+  if (line === "$ cd /") {
+    console.log("Moving to root");
     pwd = tree;
-  } else if (command.substring(0, 4) === "$ cd") {
-
-    command = command.replace("$ cd ", "");
-    if (command === "..") {
-      console.log(ogCommand.padEnd(20, " "), "Go up one dir");
-      pwd = pwd.parent;
-    } else {
-      console.log(ogCommand.padEnd(20, " "), "Go into dir", command);
-      pwd[command] = pwd[command] || { name: command, parent: pwd, directSize: 0 };
-      pwd.children = pwd.children || [];
-      pwd.children.push(pwd[command]);
-      pwd = pwd[command];
-    }
-
-  } else if (command.substring(0, 4) === "$ ls") {
-    console.log(ogCommand.padEnd(20, " "), "List folder");
-    // nothing to do?
-  } else { // must be inside an `ls` result
-    
-    if (command.match(/\d+ .+/)) {
-      console.log(ogCommand.padEnd(20, " "), "Add size for file");
-      const directSize = parseInt(command.split(" ")[0]);
-      const name = command.split(" ")[1];
-      pwd.directSize += directSize;
-      // filename no matter?
-    } else if (command.match(/dir .+/)) {
-      console.log(ogCommand.padEnd(20, " "), "Seeing directory");
-      const name = command.replace("dir ", "");
-      pwd[name] = { name, directSize: 0, parent: pwd };
-    } else {
-      throw new Error("Unknown command " + command);
-    }
+  }
+  else if (line === "$ cd ..") {
+    console.log("Moving up folder");
+    pwd = pwd.parent;
+  }
+  else if (line.substring(0, 5) === "$ cd ") {
+    console.log("Moving into folder");
+    const target = line.split("$ cd ")[1];
+    pwd.folders[target] = pwd.folders[target] || { parent: pwd, name: target, folders: {}, files: [] };
+    pwd = pwd.folders[target];
+  }
+  else if (line.substring(0, 4) === "$ ls") {
+    console.log("Ignoring ls command");
+    // no action needed, only command
+  }
+  else if (line.match(/\d+ .+/)) {
+    console.log("Seeing a file!");
+    const size = parseInt(line.split(" ")[0]);
+    const name = line.split(" ")[1];
+    pwd.files.push({ name, size });
+  }
+  else if (line.match(/dir .+/)) {
+    // we don't care that a folder is suggested it might not contain files anyways
+  }
+  else {
+    throw new Error("Unknown command", line);
   }
 });
 
-function removeParents(pwd) {
-  delete pwd.parent;
-  if (!!pwd.children?.length) {
-    pwd.children.forEach(c => removeParents(c));
-  }
-}
-removeParents(tree);
+ console.dir(tree, { depth: 8 })
 
-// console.log("");
-// console.dir(tree, { depth: 5 });
-// console.log("");
-
-const flatsizes = {};
-
-function recursiveSizeOf(pwd) {
-  if (!pwd.children || pwd.children.length === 0) {
-    return pwd.directSize;
-  } else {
-    return pwd.directSize + pwd.children.map(c => recursiveSizeOf(c)).reduce((a,b) => a+b, 0);
-  }
-}
-
-function walk(pwd) {
-  console.log("Walked", pwd.name);
-  flatsizes[pwd.name] = recursiveSizeOf(pwd);
-  pwd.children?.forEach(c => walk(c));
-}
-
-walk(tree);
-
-// console.log(flatsizes);
-
-let part1 = Object.values(flatsizes).filter(s => s <= 100000).reduce((a,b) => a+b, 0);;
-
+let part1 = 0;
 let part2 = 0;
+
+let flatSizes = [];
+function recursiveSize(pwd) {
+  return pwd.files.reduce((a,b) => a + b.size, 0)
+    + Object.keys(pwd.folders).reduce((a,b) => a + recursiveSize(pwd.folders[b]), 0);
+}
+function walk(pwd) {
+  flatSizes.push(recursiveSize(pwd));
+  Object.keys(pwd.folders).forEach(x => walk(pwd.folders[x]));
+}
+walk(tree);
+console.log(flatSizes);
+
+part1 = flatSizes.filter(x => x < 100000).reduce((a,b) => a+b, 0);
 
 // Not correct: 1414917 (too low)
 console.log("Part 1:", part1);
