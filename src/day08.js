@@ -112,7 +112,7 @@ let part1 = 0;
 const trees = [];
 for (let y = 0; y < data.length; y++) {
   for (let x = 0; x < data[0].length; x++) {
-    trees.push({ x, y, size: data[y][x] });
+    trees.push({ x, y, size: data[y][x], score: 1 });
   }
 }
 
@@ -134,6 +134,43 @@ for (let y = 0; y < data.length; y++) {
 }
 
 let part2 = 0;
+
+for (let y = 0; y < data.length; y++) {
+  for (let x = 0; x < data[0].length; x++) {
+    const tree = trees.find(t => t.x === x && t.y === y);
+    // if (y === 3 && x === 2) console.log('Checking tree', tree);
+    let viewingDistance = 0;
+    for (let i = y - 1; i >= 0; i--) {
+      viewingDistance++;
+      if (data[i][x] >= tree.size) break;
+    }
+    // if (y === 3 && x === 2) console.log('Checking tree', viewingDistance);
+    tree.score *= viewingDistance;
+    viewingDistance = 0;
+    for (let i = y + 1; i < data.length; i++) {
+      viewingDistance++;
+      if (data[i][x] >= tree.size) break;
+    }
+    // if (y === 3 && x === 2) console.log('Checking tree', viewingDistance);
+    tree.score *= viewingDistance;
+    viewingDistance = 0;
+    for (let i = x - 1; i >= 0; i--) {
+      viewingDistance++;
+      if (data[y][i] >= tree.size) break;
+    }
+    // if (y === 3 && x === 2) console.log('Checking tree', viewingDistance);
+    tree.score *= viewingDistance;
+    viewingDistance = 0;
+    for (let i = x + 1; i < data.length; i++) {
+      viewingDistance++;
+      if (data[y][i] >= tree.size) break;
+    }
+    // if (y === 3 && x === 2) console.log('Checking tree', viewingDistance);
+    tree.score *= viewingDistance;
+  }
+}
+
+part2 = trees.map(t => t.score).sort((a,b) => b-a)[0];
 
 console.log("Part 1", part1);
 console.log("Part 2", part2);
