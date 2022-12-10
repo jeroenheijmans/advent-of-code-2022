@@ -2015,55 +2015,70 @@ const moves = {
   "L": { dx: -1, dy:  0 },
 }
 
-const tail = { x: 0, y: 0 };
-const head = { x: 0, y: 0 };
+// const tail = { x: 0, y: 0 };
+// const head = { x: 0, y: 0 };
+// const visited = new Set(["0;0"]);
+// data.forEach(instruction => {
+//   for (let i = 0; i < instruction.steps; i++) {
+//     head.x += moves[instruction.dir].dx;
+//     head.y += moves[instruction.dir].dy;
+
+//     const dx = Math.abs(head.x - tail.x);
+//     const dy = Math.abs(head.y - tail.y);
+    
+//     if (dx === 0) {
+//       if (dy > 1) tail.y += moves[instruction.dir].dy;
+//     }
+//     if (dy === 0) {
+//       if (dx > 1) tail.x += moves[instruction.dir].dx;
+//     }
+//     if (dx === 1 && dy > 1) {
+//       tail.x = head.x;
+//       tail.y += moves[instruction.dir].dy;
+//     }
+//     if (dy === 1 && dx > 1) {
+//       tail.x += moves[instruction.dir].dx;
+//       tail.y = head.y;
+//     }
+
+//     visited.add(`${tail.x};${tail.y}`);
+//   }
+// });
+
+const rope = Array(9).fill({ x: 0, y: 0 });
+const tail = rope[rope.length - 1];
 const visited = new Set(["0;0"]);
+
 data.forEach(instruction => {
   for (let i = 0; i < instruction.steps; i++) {
-    head.x += moves[instruction.dir].dx;
-    head.y += moves[instruction.dir].dy;
-
-    const dx = Math.abs(head.x - tail.x);
-    const dy = Math.abs(head.y - tail.y);
+    rope[0].x += moves[instruction.dir].dx;
+    rope[0].y += moves[instruction.dir].dy;
     
-    if (dx === 0) {
-      if (dy > 1) tail.y += moves[instruction.dir].dy;
-    }
-    if (dy === 0) {
-      if (dx > 1) tail.x += moves[instruction.dir].dx;
-    }
-    if (dx === 1 && dy > 1) {
-      tail.x = head.x;
-      tail.y += moves[instruction.dir].dy;
-    }
-    if (dy === 1 && dx > 1) {
-      tail.x += moves[instruction.dir].dx;
-      tail.y = head.y;
-    }
+    for (n = 1; n < rope.length; n++) {
+      const dx = Math.abs(rope[n-1].x - rope[n].x);
+      const dy = Math.abs(rope[n-1].y - rope[n].y);
 
+      if (dx === 0) {
+        if (dy > 1) rope[n].y += moves[instruction.dir].dy;
+      }
+      if (dy === 0) {
+        if (dx > 1) rope[n].x += moves[instruction.dir].dx;
+      }
+      if (dx === 1 && dy > 1) {
+        rope[n].x = rope[n-1].x;
+        rope[n].y += moves[instruction.dir].dy;
+      }
+      if (dy === 1 && dx > 1) {
+        rope[n].x += moves[instruction.dir].dx;
+        rope[n].y = rope[n-1].y;
+      }
+    }
     visited.add(`${tail.x};${tail.y}`);
-
-    // console.log();
-    // for (let y = -5; y < 5; y++) {
-    //   let line = "";
-    //   for (let x = -5; x < 5; x++) {
-    //     if (head.y === y && head.x === x) {
-    //       line += "H";
-    //     } else if (tail.y === y && tail.x === x) {
-    //       line += "T";
-    //     } else {
-    //       line += ".";
-    //     }
-    //   }
-    //   console.log(line);
-    // }
   }
 });
 
-// console.log(visited);
-
 let part1 = visited.size;
-let part2 = 0;
+let part2 = visited.size;
 
 console.log("Part 1", part1);
 console.log("Part 2", part2);
