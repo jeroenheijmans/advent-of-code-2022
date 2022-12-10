@@ -173,7 +173,33 @@ data.forEach(line => {
 });
 
 let part1 = signals.reduce((a,b) => a+b, 0);
-let part2 = 0;
+
+cycle = 0;
+x = 1;
+buffer = [];
+
+data.forEach(line => {
+  switch (line.opcode) {
+    case "noop":
+      cycle++;
+      buffer.push(Math.abs(cycle - x) <= 1 ? "█" : " ");
+      if (cycle % 40 === 0) { cycle = 0; buffer.push("\n"); }
+      break;
+
+    case "addx":
+      cycle++;
+      buffer.push(Math.abs(cycle - x) <= 1 ? "█" : " ");
+      if (cycle % 40 === 0) { cycle = 0; buffer.push("\n"); }
+      cycle++;
+      x += line.val;
+      buffer.push(Math.abs(cycle - x) <= 1 ? "█" : " ");
+      if (cycle % 40 === 0) { cycle = 0; buffer.push("\n"); }
+      break;
+  }
+});
+
+let part2 = buffer.reduce((prev, curr) => prev + curr , "");
 
 console.log("Part 1", part1);
-console.log("Part 2", part2);
+console.log("Part 2");
+console.log(part2);
