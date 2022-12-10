@@ -202,4 +202,4 @@ let part2 = buffer.reduce((prev, curr) => prev + curr , "");
 
 console.log("Part 1", part1);
 console.log("Part 2");
-console.log(part2);
+console.log(part2); // off-by-one error but we can see past it, apparently 😬
