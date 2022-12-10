@@ -2015,63 +2015,67 @@ const moves = {
   "L": { dx: -1, dy:  0 },
 }
 
-const rope = Array.from({ length: 10 }).map(_ => ({ x: 0, y: 0 }));
-const tail = rope[rope.length - 1];
-const visited = new Set(["0;0"]);
+function simulateRope(length) {
+  const rope = Array.from({ length }).map(_ => ({ x: 0, y: 0 }));
+  const tail = rope[rope.length - 1];
+  const visited = new Set(["0;0"]);
 
-function printRope(rope) {
-  const xs = rope.map(r => r.x);
-  const ys = rope.map(r => r.y);
-  const minx = Math.min(0, ...xs), maxx = Math.max(5, ...xs);
-  const miny = Math.min(-4, ...ys), maxy = Math.max(0, ...ys);
-  for (let y = miny; y <= maxy; y++) {
-    let line = "";
-    for (let x = minx; x <= maxx; x++) {
-      let filled = false;
-      for (let n = 0; n < rope.length; n++) {
-        if (rope[n].x === x && rope[n].y === y) {
-          line += "" + (n === 0 ? "H" : (n === rope.length-1 ? "T" : n));
-          filled = true;
-          break;
+  function printRope(rope) {
+    const xs = rope.map(r => r.x);
+    const ys = rope.map(r => r.y);
+    const minx = Math.min(0, ...xs), maxx = Math.max(5, ...xs);
+    const miny = Math.min(-4, ...ys), maxy = Math.max(0, ...ys);
+    for (let y = miny; y <= maxy; y++) {
+      let line = "";
+      for (let x = minx; x <= maxx; x++) {
+        let filled = false;
+        for (let n = 0; n < rope.length; n++) {
+          if (rope[n].x === x && rope[n].y === y) {
+            line += "" + (n === 0 ? "H" : (n === rope.length-1 ? "T" : n));
+            filled = true;
+            break;
+          }
         }
+        if (!filled) line += ".";
       }
-      if (!filled) line += ".";
+      console.log(line);
     }
-    console.log(line);
+    console.log();
   }
-  console.log();
+
+  data.forEach(instruction => {
+    // console.log('====================', instruction.dir, instruction.steps);
+
+    for (let i = 0; i < instruction.steps; i++) {
+      rope[0].x += moves[instruction.dir].dx;
+      rope[0].y += moves[instruction.dir].dy;
+      
+      for (n = 1; n < rope.length; n++) {
+        const dx = rope[n-1].x - rope[n].x;
+        const dy = rope[n-1].y - rope[n].y;
+        const isTouchingDiagonally = Math.abs(dx) === 1 && Math.abs(dy) === 1;
+
+        if (dy === 0 && dx === 2) rope[n].x++;
+        else if (dy === 0 && dx === -2) rope[n].x--;
+        else if (dx === 0 && dy === 2) rope[n].y++;
+        else if (dx === 0 && dy === -2) rope[n].y--;
+
+        else if (!isTouchingDiagonally && dy >= 1 && dx >= 1) { rope[n].x++; rope[n].y++; }
+        else if (!isTouchingDiagonally && dy <= -1 && dx >= 1) { rope[n].x++; rope[n].y--; }
+        else if (!isTouchingDiagonally && dy >= 1 && dx <= -1) { rope[n].x--; rope[n].y++; }
+        else if (!isTouchingDiagonally && dy <= -1 && dx <= -1) { rope[n].x--; rope[n].y--; }
+      }
+      visited.add(`${tail.x};${tail.y}`);
+
+      // printRope(rope);
+    }
+  });
+
+  return visited.size;
 }
 
-data.forEach(instruction => {
-  // console.log('====================', instruction.dir, instruction.steps);
-
-  for (let i = 0; i < instruction.steps; i++) {
-    rope[0].x += moves[instruction.dir].dx;
-    rope[0].y += moves[instruction.dir].dy;
-    
-    for (n = 1; n < rope.length; n++) {
-      const dx = rope[n-1].x - rope[n].x;
-      const dy = rope[n-1].y - rope[n].y;
-      const isTouchingDiagonally = Math.abs(dx) === 1 && Math.abs(dy) === 1;
-
-      if (dy === 0 && dx === 2) rope[n].x++;
-      else if (dy === 0 && dx === -2) rope[n].x--;
-      else if (dx === 0 && dy === 2) rope[n].y++;
-      else if (dx === 0 && dy === -2) rope[n].y--;
-
-      else if (!isTouchingDiagonally && dy >= 1 && dx >= 1) { rope[n].x++; rope[n].y++; }
-      else if (!isTouchingDiagonally && dy <= -1 && dx >= 1) { rope[n].x++; rope[n].y--; }
-      else if (!isTouchingDiagonally && dy >= 1 && dx <= -1) { rope[n].x--; rope[n].y++; }
-      else if (!isTouchingDiagonally && dy <= -1 && dx <= -1) { rope[n].x--; rope[n].y--; }
-    }
-    visited.add(`${tail.x};${tail.y}`);
-
-    // printRope(rope);
-  }
-});
-
-let part1 = visited.size;
-let part2 = visited.size;
+let part1 = simulateRope(2);
+let part2 = simulateRope(10);
 
 console.log("Part 1", part1);
 console.log("Part 2", part2);
