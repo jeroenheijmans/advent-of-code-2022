@@ -19,9 +19,9 @@ Here's something I learned for the various days of advent:
 5. Input parsing is a lot of work.
 6. Detailed knowledge is useful in detailed situations.
 7. Sleep is also important!
-8. Puzzle still TODO!
-9. Puzzle still TODO!
-10. Puzzle still TODO!
+8. Data structures are everything!
+9. Train rides are decent for puzzling.
+10. Off-by-one might be solvable through fault-tolerance.
 11. Puzzle still TODO!
 12. Puzzle still TODO!
 13. Puzzle still TODO!
