@@ -39,6 +39,7 @@ const data = input
 const monkeys = [];
 let current = null;
 let number = 0;
+let itemid = 1001;
 
 data.forEach(line => {
   if (line.includes("Monkey ")) {
@@ -55,7 +56,7 @@ data.forEach(line => {
   }
   if (line.includes("Starting items: ")) {
     const stuff = line.replace("Starting items: ", "");
-    current.items = stuff.split(", ").map(x => parseInt(x));
+    current.items = stuff.split(", ").map(x => ({ itemid: itemid++, worry: parseInt(x) }));
   }
   if (line.includes("Test: divisible by ")) {
     const nr = parseInt(line.replace("Test: divisible by ", ""));
@@ -88,52 +89,38 @@ data.forEach(line => {
   }
 });
 
-let bigdivisor = monkeys.map(m => m.divisor).reduce((curr,prev) => curr * prev, 1);
-console.log(bigdivisor);
-
-
-for (let round = 0; round < 20; round++) {
-  monkeys.forEach(monkey => {
-    // console.log("Monkey", monkey.nr, " items ", monkey.items);
-
-    for (let i = 0; i < monkey.items.length; i++) {
-      monkey.inspections++;
-      
-      monkey.items[i] = monkey.operation(monkey.items[i]);
-      monkey.items[i] = Math.trunc(monkey.items[i] / 3);
-
-      // console.log("    changes were made, now:", monkey.items);
-      if (isNaN(monkey.items[i])) throw new Error("Here");
-      
-      if (monkey.test(monkey.items[i])) {
-        monkeys[monkey.iftrue].items.push(monkey.items[i]);
-      } else {
-        monkeys[monkey.iffalse].items.push(monkey.items[i]);
-      }
-
-    }
-    monkey.items = [];
-  });
-}
-
-let inspections1 = monkeys.map(m => m.inspections).sort((a,b) => b-a);
-let part1 = inspections1[0] * inspections1[1];
+let stateMapping = { };
+let stateInspectChanges = { };
+let prev = null;
 
 for (let round = 0; round < 10000; round++) {
+  const serializedStart = prev || JSON.stringify(
+    monkeys.map(m => ({ nr: m.nr, items: m.items.map(i => i.itemid) }))
+  );
+
+  if (stateMapping.hasOwnProperty(serializedStart) && stateMapping.hasOwnProperty(stateMapping[serializedStart])) {
+    // console.log(round, "saw old situation!");
+    prev = stateMapping[serializedStart];
+    monkeys.forEach((m, idx) => m.inspections += stateInspectChanges[serializedStart][idx]);
+    continue;
+  }
+
+  if (!!prev) {
+    throw new Error("Shouldn't be here");
+  }
+
+  const inspectChanges = monkeys.map(_ => 0);
   monkeys.forEach(monkey => {
     // console.log("Monkey", monkey.nr, " items ", monkey.items);
     // if (round % 100 === 0) console.log(round);
 
     for (let i = 0; i < monkey.items.length; i++) {
       monkey.inspections++;
-      
-      monkey.items[i] = monkey.operation(monkey.items[i]);
-      // monkey.items[i] = Math.trunc(monkey.items[i] / 3);
-
-      // console.log("    changes were made, now:", monkey.items);
-      if (isNaN(monkey.items[i])) throw new Error("Here");
-      
-      if (monkey.test(monkey.items[i])) {
+      inspectChanges[monkey.nr]++;
+      monkey.items[i].worry = monkey.operation(monkey.items[i].worry);
+      monkey.items[i].worry = Math.trunc(monkey.items[i].worry / 3);
+     
+      if (monkey.test(monkey.items[i].worry)) {
         monkeys[monkey.iftrue].items.push(monkey.items[i]);
       } else {
         monkeys[monkey.iffalse].items.push(monkey.items[i]);
@@ -143,13 +130,16 @@ for (let round = 0; round < 10000; round++) {
     monkey.items = [];
   });
 
-  if (monkeys.every(m => m.items.every(i => i % bigdivisor === 0))) {
-    monkeys.forEach(m => m.items.forEach((val, idx) => m.items[idx] = val / bigdivisor));
-  }
+  const serializedEnd = JSON.stringify(
+    monkeys.map(m => ({ nr: m.nr, items: m.items.map(i => i.itemid) }))
+  );
+
+  stateMapping[serializedStart] = serializedEnd;
+  stateInspectChanges[serializedStart] = inspectChanges;
 }
 
 let inspections2 = monkeys.map(m => m.inspections).sort((a,b) => b-a);
 let part2 = inspections2[0] * inspections2[1];
 
-console.log("Part 1", part1);
 console.log("Part 2", part2);
+console.log("Target", 2713310158);
