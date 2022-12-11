@@ -100,6 +100,35 @@ for (let round = 0; round < 20; round++) {
       monkey.inspections++;
       
       monkey.items[i] = monkey.operation(monkey.items[i]);
+      monkey.items[i] = Math.trunc(monkey.items[i] / 3);
+
+      // console.log("    changes were made, now:", monkey.items);
+      if (isNaN(monkey.items[i])) throw new Error("Here");
+      
+      if (monkey.test(monkey.items[i])) {
+        monkeys[monkey.iftrue].items.push(monkey.items[i]);
+      } else {
+        monkeys[monkey.iffalse].items.push(monkey.items[i]);
+      }
+
+    }
+    monkey.items = [];
+  });
+}
+
+let inspections1 = monkeys.map(m => m.inspections).sort((a,b) => b-a);
+let part1 = inspections1[0] * inspections1[1];
+
+for (let round = 0; round < 10000; round++) {
+  monkeys.forEach(monkey => {
+    // console.log("Monkey", monkey.nr, " items ", monkey.items);
+    // if (round % 100 === 0) console.log(round);
+
+    for (let i = 0; i < monkey.items.length; i++) {
+      monkey.inspections++;
+      
+      monkey.items[i] = monkey.operation(monkey.items[i]);
+      // monkey.items[i] = Math.trunc(monkey.items[i] / 3);
 
       // console.log("    changes were made, now:", monkey.items);
       if (isNaN(monkey.items[i])) throw new Error("Here");
@@ -119,35 +148,8 @@ for (let round = 0; round < 20; round++) {
   }
 }
 
-for (let round = 0; round < 10000; round++) {
-  monkeys.forEach(monkey => {
-    // console.log("Monkey", monkey.nr, " items ", monkey.items);
-    // if (round % 100 === 0) console.log(round);
-
-    for (let i = 0; i < monkey.items.length; i++) {
-      monkey.inspections++;
-      
-      monkey.items[i] = monkey.operation(monkey.items[i]);
-      monkey.items[i] = Math.trunc(monkey.items[i] / 3);
-
-      // console.log("    changes were made, now:", monkey.items);
-      if (isNaN(monkey.items[i])) throw new Error("Here");
-      
-      if (monkey.test(monkey.items[i])) {
-        monkeys[monkey.iftrue].items.push(monkey.items[i]);
-      } else {
-        monkeys[monkey.iffalse].items.push(monkey.items[i]);
-      }
-
-    }
-    monkey.items = [];
-  });
-}
-
-let inspections = monkeys.map(m => m.inspections).sort((a,b) => b-a);
-
-let part1 = inspections[0] * inspections[1];
-let part2 = 0;
+let inspections2 = monkeys.map(m => m.inspections).sort((a,b) => b-a);
+let part2 = inspections2[0] * inspections2[1];
 
 console.log("Part 1", part1);
 console.log("Part 2", part2);
