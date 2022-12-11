@@ -1,32 +1,59 @@
 const input = `
 Monkey 0:
-  Starting items: 79, 98
-  Operation: new = old * 19
-  Test: divisible by 23
+  Starting items: 83, 88, 96, 79, 86, 88, 70
+  Operation: new = old * 5
+  Test: divisible by 11
     If true: throw to monkey 2
     If false: throw to monkey 3
 
 Monkey 1:
-  Starting items: 54, 65, 75, 74
-  Operation: new = old + 6
-  Test: divisible by 19
-    If true: throw to monkey 2
+  Starting items: 59, 63, 98, 85, 68, 72
+  Operation: new = old * 11
+  Test: divisible by 5
+    If true: throw to monkey 4
     If false: throw to monkey 0
 
 Monkey 2:
-  Starting items: 79, 60, 97
-  Operation: new = old * old
-  Test: divisible by 13
-    If true: throw to monkey 1
-    If false: throw to monkey 3
+  Starting items: 90, 79, 97, 52, 90, 94, 71, 70
+  Operation: new = old + 2
+  Test: divisible by 19
+    If true: throw to monkey 5
+    If false: throw to monkey 6
 
 Monkey 3:
-  Starting items: 74
-  Operation: new = old + 3
-  Test: divisible by 17
+  Starting items: 97, 55, 62
+  Operation: new = old + 5
+  Test: divisible by 13
+    If true: throw to monkey 2
+    If false: throw to monkey 6
+
+Monkey 4:
+  Starting items: 74, 54, 94, 76
+  Operation: new = old * old
+  Test: divisible by 7
     If true: throw to monkey 0
+    If false: throw to monkey 3
+
+Monkey 5:
+  Starting items: 58
+  Operation: new = old + 4
+  Test: divisible by 17
+    If true: throw to monkey 7
     If false: throw to monkey 1
 
+Monkey 6:
+  Starting items: 66, 63
+  Operation: new = old + 6
+  Test: divisible by 2
+    If true: throw to monkey 7
+    If false: throw to monkey 5
+
+Monkey 7:
+  Starting items: 56, 56, 90, 96, 68
+  Operation: new = old + 7
+  Test: divisible by 3
+    If true: throw to monkey 4
+    If false: throw to monkey 1
 `;
 
 const data = input
@@ -71,7 +98,7 @@ data.forEach(line => {
         current.operation = (old) => old + old;
       } else {
         current.operation = (old) => old * old;
-      }      
+      }
     } else {
       const nr = parseInt(stuff.substring(2));
       if (isAddition) {
@@ -89,37 +116,17 @@ data.forEach(line => {
   }
 });
 
-let stateMapping = { };
-let stateInspectChanges = { };
-let prev = null;
 
-for (let round = 0; round < 10000; round++) {
-  const serializedStart = prev || JSON.stringify(
-    monkeys.map(m => ({ nr: m.nr, items: m.items.map(i => i.itemid) }))
-  );
-
-  if (stateMapping.hasOwnProperty(serializedStart) && stateMapping.hasOwnProperty(stateMapping[serializedStart])) {
-    // console.log(round, "saw old situation!");
-    prev = stateMapping[serializedStart];
-    monkeys.forEach((m, idx) => m.inspections += stateInspectChanges[serializedStart][idx]);
-    continue;
-  }
-
-  if (!!prev) {
-    throw new Error("Shouldn't be here");
-  }
-
-  const inspectChanges = monkeys.map(_ => 0);
+for (let round = 0; round < 20; round++) {
+  // console.log("------------------------------------------------------", round);
+  // console.log(monkeys.map(m => m.items.map(i => ({...i, monk: m.nr}))).flat());
+  
   monkeys.forEach(monkey => {
-    // console.log("Monkey", monkey.nr, " items ", monkey.items);
-    // if (round % 100 === 0) console.log(round);
-
     for (let i = 0; i < monkey.items.length; i++) {
       monkey.inspections++;
-      inspectChanges[monkey.nr]++;
       monkey.items[i].worry = monkey.operation(monkey.items[i].worry);
       monkey.items[i].worry = Math.trunc(monkey.items[i].worry / 3);
-     
+
       if (monkey.test(monkey.items[i].worry)) {
         monkeys[monkey.iftrue].items.push(monkey.items[i]);
       } else {
@@ -129,17 +136,12 @@ for (let round = 0; round < 10000; round++) {
     }
     monkey.items = [];
   });
-
-  const serializedEnd = JSON.stringify(
-    monkeys.map(m => ({ nr: m.nr, items: m.items.map(i => i.itemid) }))
-  );
-
-  stateMapping[serializedStart] = serializedEnd;
-  stateInspectChanges[serializedStart] = inspectChanges;
 }
 
-let inspections2 = monkeys.map(m => m.inspections).sort((a,b) => b-a);
-let part2 = inspections2[0] * inspections2[1];
+let inspections1 = monkeys.map(m => m.inspections).sort((a,b) => b-a);
+let part1 = inspections1[0] * inspections1[1];
+let part2 = 0;
 
+console.log("Part 1", part1);
 console.log("Part 2", part2);
-console.log("Target", 2713310158);
+
