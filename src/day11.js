@@ -89,6 +89,8 @@ data.forEach(line => {
 });
 
 let bigdivisor = monkeys.map(m => m.divisor).reduce((curr,prev) => curr * prev, 1);
+console.log(bigdivisor);
+
 
 for (let round = 0; round < 20; round++) {
   monkeys.forEach(monkey => {
@@ -98,7 +100,6 @@ for (let round = 0; round < 20; round++) {
       monkey.inspections++;
       
       monkey.items[i] = monkey.operation(monkey.items[i]);
-      monkey.items[i] = Math.trunc(monkey.items[i] / bigdivisor);
 
       // console.log("    changes were made, now:", monkey.items);
       if (isNaN(monkey.items[i])) throw new Error("Here");
@@ -112,12 +113,16 @@ for (let round = 0; round < 20; round++) {
     }
     monkey.items = [];
   });
+
+  if (monkeys.every(m => m.items.every(i => i % bigdivisor === 0))) {
+    monkeys.forEach(m => m.items.forEach((val, idx) => m.items[idx] = val / bigdivisor));
+  }
 }
 
 for (let round = 0; round < 10000; round++) {
   monkeys.forEach(monkey => {
     // console.log("Monkey", monkey.nr, " items ", monkey.items);
-    if (round % 100 === 0) console.log(round);
+    // if (round % 100 === 0) console.log(round);
 
     for (let i = 0; i < monkey.items.length; i++) {
       monkey.inspections++;
