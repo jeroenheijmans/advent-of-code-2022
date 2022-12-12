@@ -23,7 +23,7 @@ Here's something I learned for the various days of advent:
 9. Train rides are decent for puzzling.
 10. Off-by-one might be solvable through fault-tolerance.
 11. Puzzle still TODO!
-12. Puzzle still TODO!
+12. Preparation would've been everything.
 13. Puzzle still TODO!
 14. Puzzle still TODO!
 15. Puzzle still TODO!
