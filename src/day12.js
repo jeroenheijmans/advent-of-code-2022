@@ -76,21 +76,21 @@ for (let y = 0; y < data.length; y++) {
   for (let x = 0; x < data[0].length; x++) {
     const key = `${x};${y}`;
     const height = graph[key].value;
-    if (x > 0 && (graph[`${x-1};${y}`].value <= height || graph[`${x-1};${y}`].value === height + 1)) graph[key].links.push(graph[`${x-1};${y}`]);
-    if (y > 0 && (graph[`${x};${y-1}`].value <= height || graph[`${x};${y-1}`].value === height + 1)) graph[key].links.push(graph[`${x};${y-1}`]);
-    if (x < data[0].length - 1 && (graph[`${x+1};${y}`].value <= height || graph[`${x+1};${y}`].value === height + 1)) graph[key].links.push(graph[`${x+1};${y}`]);
-    if (y < data.length - 1 && (graph[`${x};${y+1}`].value <= height || graph[`${x};${y+1}`].value === height + 1)) graph[key].links.push(graph[`${x};${y+1}`]);
+    if (x > 0 && (graph[`${x-1};${y}`].value >= height || graph[`${x-1};${y}`].value === height - 1)) graph[key].links.push(graph[`${x-1};${y}`]);
+    if (y > 0 && (graph[`${x};${y-1}`].value >= height || graph[`${x};${y-1}`].value === height - 1)) graph[key].links.push(graph[`${x};${y-1}`]);
+    if (x < data[0].length - 1 && (graph[`${x+1};${y}`].value >= height || graph[`${x+1};${y}`].value === height - 1)) graph[key].links.push(graph[`${x+1};${y}`]);
+    if (y < data.length - 1 && (graph[`${x};${y+1}`].value >= height || graph[`${x};${y+1}`].value === height - 1)) graph[key].links.push(graph[`${x};${y+1}`]);
   }
 }
 
 let paths = [
-  [`${pos.x};${pos.y}`]
+  [target]
 ];
-let visited = new Set(`${pos.x};${pos.y}`);
+let visited = new Set(target);
 let loop = 0;
-let part1 = 0;
+let part2 = 0;
 
-while (loop++ < 1000 && part1 === 0) {
+while (loop++ < 1000 && part2 === 0) {
   const newPaths = []
   paths.forEach(path => {
     const from = path.at(-1);
@@ -104,13 +104,12 @@ while (loop++ < 1000 && part1 === 0) {
   });
   paths = newPaths;
   paths.forEach(p => {
-    if (p.at(-1) === target) {
-      part1 = p.length - 1; // off by 1: the start pos is not a step!
+    if (graph[p.at(-1)].value === 1) {
+      part2 = p.length - 1; // off by 1: the start pos is not a step!
+      console.log(p);
     }
   });
 }
 
-let part2 = 0;
-
-console.log("Part 1", part1);
+console.log("Part 1", 534);
 console.log("Part 2", part2);
