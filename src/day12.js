@@ -60,7 +60,7 @@ for (let y = 0; y < data.length; y++) {
       data[y][x] = "a";
     }
     if (data[y][x] === "E") {
-      target = {x,y};
+      target = `${x};${y}`;
       data[y][x] = "z";
     }
     graph[`${x};${y}`] = {
@@ -90,14 +90,10 @@ let visited = new Set(`${pos.x};${pos.y}`);
 let loop = 0;
 let part1 = 0;
 
-while (loop++ < 1000) {
+while (loop++ < 1000 && part1 === 0) {
   const newPaths = []
   paths.forEach(path => {
     const from = path.at(-1);
-    if (from === `${target.x};${target.y}`) {
-      part1 = path.length;
-      throw new Error("Exiting we found part 1: " + part1);
-    }
     const candidates = graph[from].links.filter(c => !visited.has(c.key));
     candidates.forEach(candidate => {
       if (!visited.has(candidate.key)) {
@@ -107,9 +103,14 @@ while (loop++ < 1000) {
     });
   });
   paths = newPaths;
+  paths.forEach(p => {
+    if (p.at(-1) === target) {
+      part1 = p.length - 1; // off by 1: the start pos is not a step!
+    }
+  });
 }
 
 let part2 = 0;
 
-console.log("Part 1", part1); // 535 incorrect
+console.log("Part 1", part1);
 console.log("Part 2", part2);
