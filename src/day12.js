@@ -50,13 +50,13 @@ const data = input
   ;
 
 const graph = { };
-let pos = null;
+let start = null;
 let target = null;
 
 for (let y = 0; y < data.length; y++) {
   for (let x = 0; x < data[0].length; x++) {
     if (data[y][x] === "S") {
-      pos = {x,y};
+      start = `${x};${y}`;
       data[y][x] = "a";
     }
     if (data[y][x] === "E") {
@@ -65,7 +65,8 @@ for (let y = 0; y < data.length; y++) {
     }
     graph[`${x};${y}`] = {
       key: `${x};${y}`,
-      links: [],
+      downwards: [],
+      upwards: [],
       letter: data[y][x],
       value: data[y][x].charCodeAt(0) - 96,
     };
@@ -76,40 +77,44 @@ for (let y = 0; y < data.length; y++) {
   for (let x = 0; x < data[0].length; x++) {
     const key = `${x};${y}`;
     const height = graph[key].value;
-    if (x > 0 && (graph[`${x-1};${y}`].value >= height || graph[`${x-1};${y}`].value === height - 1)) graph[key].links.push(graph[`${x-1};${y}`]);
-    if (y > 0 && (graph[`${x};${y-1}`].value >= height || graph[`${x};${y-1}`].value === height - 1)) graph[key].links.push(graph[`${x};${y-1}`]);
-    if (x < data[0].length - 1 && (graph[`${x+1};${y}`].value >= height || graph[`${x+1};${y}`].value === height - 1)) graph[key].links.push(graph[`${x+1};${y}`]);
-    if (y < data.length - 1 && (graph[`${x};${y+1}`].value >= height || graph[`${x};${y+1}`].value === height - 1)) graph[key].links.push(graph[`${x};${y+1}`]);
+    const gridNeighbors = [];
+    if (x > 0) gridNeighbors.push(graph[`${x-1};${y}`]);
+    if (y > 0) gridNeighbors.push(graph[`${x};${y-1}`]);
+    if (x < data[0].length - 1) gridNeighbors.push(graph[`${x+1};${y}`]);
+    if (y < data.length - 1) gridNeighbors.push(graph[`${x};${y+1}`]);
+    graph[key].downwards = gridNeighbors.filter(n => n.value >= height || n.value === height - 1);
+    graph[key].upwards = gridNeighbors.filter(n => n.value <= height || n.value === height + 1);
   }
 }
 
-let paths = [
-  [target]
-];
-let visited = new Set(target);
-let loop = 0;
-let part2 = 0;
-
-while (loop++ < 1000 && part2 === 0) {
-  const newPaths = []
-  paths.forEach(path => {
-    const from = path.at(-1);
-    const candidates = graph[from].links.filter(c => !visited.has(c.key));
-    candidates.forEach(candidate => {
-      if (!visited.has(candidate.key)) {
-        newPaths.push([...path, candidate.key]);
-        visited.add(candidate.key);
-      }
+function solveFor(start, ends, linktype) {
+  let paths = [[start]];
+  let visited = new Set(start);
+  let loop = 0, result = 0;
+  
+  while (loop++ < 1000 && result === 0) {
+    const newPaths = []
+    
+    paths.forEach(path => {
+      const candidates = graph[path.at(-1)][linktype].filter(c => !visited.has(c.key));
+      candidates.forEach(candidate => {
+        if (!visited.has(candidate.key)) {
+          newPaths.push([...path, candidate.key]);
+          visited.add(candidate.key);
+        }
+      });
     });
-  });
-  paths = newPaths;
-  paths.forEach(p => {
-    if (graph[p.at(-1)].value === 1) {
-      part2 = p.length - 1; // off by 1: the start pos is not a step!
-      console.log(p);
-    }
-  });
+
+    paths = newPaths;
+
+    paths.forEach(p => {
+      if (ends.has(graph[p.at(-1)].key)) result = p.length - 1; // -1 because start is not a step
+    });
+  }
+  return result;
 }
 
-console.log("Part 1", 534);
-console.log("Part 2", part2);
+const lowpoints = Object.values(graph).filter(n => n.value === 1).map(n => n.key);
+
+console.log("Part 1", solveFor(start, new Set([target]), "upwards"));
+console.log("Part 2", solveFor(target, new Set(lowpoints), "downwards"));
