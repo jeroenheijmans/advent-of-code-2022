@@ -1,4 +1,4 @@
-let input = [
+const input = [
   [[[2],3,[],[]]],
   [[6,9,1,3,[[2,9],4,8,[9,2,1]]],[],[[3],3]],
 
@@ -454,7 +454,6 @@ let input = [
 ];
 
 function compareLists(one, two) {
-  // console.log("Comparing lists", one, two);
   for (let i = 0; i < Math.max(one.length, two.length); i++) {
     if (i === one.length && i < two.length) return true;
     if (i === two.length && i < one.length) return false;
@@ -465,14 +464,12 @@ function compareLists(one, two) {
 }
 
 function compareNumbers(one, two) {
-  // console.log("Comparing numbers", one, two);
   if (one > two) return false;
   if (one < two) return true;
   return null;
 }
 
 function compare(one, two) {
-  // console.log("comparing", one, two);
   if (typeof one === 'number' && typeof two === 'number') {
     return compareNumbers(one, two);
   }
@@ -495,7 +492,6 @@ for (let i = 0, pair = 1; i < input.length; i += 2, pair++) {
   const one = input[i];
   const two = input[i+1];
   const result = compareLists(one, two);
-  // console.log(result, " --", pair, " ---Result of comparing", one, two);
   if (result) part1 += pair;
 }
 
@@ -504,18 +500,20 @@ let part2 = 1;
 input.sort((a,b) => {
   const result = compareLists(a,b);
   if (result === null) return 0;
-  return result ? 1 : -1;
+  return result ? -1 : 1;
 });
 
-require('fs').writeFileSync('dump.txt',
-  input.map(x => "  " + JSON.stringify(x)).join("\n")
-);
+// require('fs').writeFileSync('dump.txt',
+//   input.map(x => "  " + JSON.stringify(x)).join("\n")
+// );
 
 for (let i=0; i<input.length; i++) {
-  if (input[i].length === 1 && input[i][0].length === 1 && (input[i][0][0] === 2 || input[i][0][0] === 6)) {
+  if (input[i].length === 1
+    && input[i][0].length === 1 
+    && (input[i][0][0] === 2 || input[i][0][0] === 6)) {
     part2 *= (i + 1);
   }
 }
 
 console.log("Part 1", part1);
-console.log("Part 2", part2); // not 90902
+console.log("Part 2", part2);
