@@ -1,4 +1,4 @@
-const input = [
+let input = [
   [[[2],3,[],[]]],
   [[6,9,1,3,[[2,9],4,8,[9,2,1]]],[],[[3],3]],
 
@@ -449,7 +449,8 @@ const input = [
   [[[],6,4,[1,8,7,4],1],[4,8,[[],4,[10,2,7,2],10,[]]],[[[10,7,0],10],[10]]],
   [[[2,[6],1,5,[8,0,10,2,2]],[[3,4,6,8,5]],5],[[0,[2,6,0,0],[3,6]]]],
 
-
+  [[2]],
+  [[6]],
 ];
 
 function compareLists(one, two) {
@@ -494,11 +495,27 @@ for (let i = 0, pair = 1; i < input.length; i += 2, pair++) {
   const one = input[i];
   const two = input[i+1];
   const result = compareLists(one, two);
-  console.log(result, " --", pair, " ---Result of comparing", one, two);
+  // console.log(result, " --", pair, " ---Result of comparing", one, two);
   if (result) part1 += pair;
 }
 
-let part2 = 0;
+let part2 = 1;
+
+input.sort((a,b) => {
+  const result = compareLists(a,b);
+  if (result === null) return 0;
+  return result ? 1 : -1;
+});
+
+require('fs').writeFileSync('dump.txt',
+  input.map(x => "  " + JSON.stringify(x)).join("\n")
+);
+
+for (let i=0; i<input.length; i++) {
+  if (input[i].length === 1 && input[i][0].length === 1 && (input[i][0][0] === 2 || input[i][0][0] === 6)) {
+    part2 *= (i + 1);
+  }
+}
 
 console.log("Part 1", part1);
-console.log("Part 2", part2);
+console.log("Part 2", part2); // not 90902
