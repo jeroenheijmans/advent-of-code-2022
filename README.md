@@ -24,8 +24,8 @@ Here's something I learned for the various days of advent:
 10. Off-by-one might be solvable through fault-tolerance.
 11. Puzzle still TODO!
 12. Preparation would've been everything.
-13. Puzzle still TODO!
-14. Puzzle still TODO!
+13. Chaos brings energy.
+14. Calm brings clarity.
 15. Puzzle still TODO!
 16. Puzzle still TODO!
 17. Puzzle still TODO!
