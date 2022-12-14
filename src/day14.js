@@ -172,7 +172,7 @@ data.forEach(line => {
   }
 });
 
-const origin = {x:500,y:0};
+const origin = { x:500, y:0 };
 let i = 0;
 while (i++ < 10000) {
   let grain = {x: origin.x, y: origin.y};
@@ -194,22 +194,56 @@ while (i++ < 10000) {
   }
 }
 
+let part1 = Object.values(grid).filter(x => x === "o").length;
+
+// Just continue filling grid from part 1!
+
+i = 0;
+let originBlocked = false;
+while (i++ < 1000000 && !originBlocked) {
+  let grain = {x: origin.x, y: origin.y};
+
+  let j = 0;
+  while (j++ < 1000000) {
+    if (grain.y === maxy + 1) {
+      grid[`${grain.x};${grain.y}`] = "o";
+      break;
+    }
+
+    if (!(`${grain.x};${grain.y + 1}` in grid)) {
+      grain.y++;
+    } else if (!(`${grain.x - 1};${grain.y + 1}` in grid)) {
+      grain.y++;
+      grain.x--
+    } else if (!(`${grain.x + 1};${grain.y + 1}` in grid)) {
+      grain.y++;
+      grain.x++
+    } else {
+      grid[`${grain.x};${grain.y}`] = "o";
+      originBlocked = grain.x === origin.x && grain.y === origin.y;
+      break;
+    }
+  }
+}
+
 function printGrid() {
-  for (let y = 0; y <= maxy; y++) {
+  const xs = Object.keys(grid).map(k => parseInt(k.split(";")[0]));
+  let minx = Math.min(...xs);
+  let maxx = Math.max(...xs);
+  
+  for (let y = 0; y <= maxy + 2; y++) {
     let line = "";
-    for (let x = minx-1; x <= maxx; x++) {
-      line += grid[`${x};${y}`] || ".";
+    for (let x = minx-1; x <= maxx + 1; x++) {
+      line += grid[`${x};${y}`] || (y === maxy + 2 ? "#" : ".");
     }
     console.log(line);
   }
   console.log();
 }
 
-printGrid();
+// printGrid();
 
-let part1 = Object.values(grid).filter(x => x === "o").length;
-
-let part2 = 0;
+let part2 = Object.values(grid).filter(x => x === "o").length;
 
 console.log("Part 1", part1);
 console.log("Part 2", part2);
