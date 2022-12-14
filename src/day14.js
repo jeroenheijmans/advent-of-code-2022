@@ -149,20 +149,26 @@ const data = input
   ;
 
 const grid = {};
-let maxy = 0;
+let maxy = 0, minx = 500, maxx = 500;
 
 data.forEach(line => {
   const pos = line[0];
   for (let i = 1; i < line.length; i++) {
     const target = line[i];
-    while (pos.x !== target.x || pos.y !== target.y) {
+    do {
       grid[`${pos.x};${pos.y}`] = "#";
       maxy = Math.max(maxy, pos.y);
+      maxx = Math.max(maxx, pos.x);
+      minx = Math.min(minx, pos.x);
       if (pos.x < target.x) pos.x++;
       if (pos.x > target.x) pos.x--;
       if (pos.y < target.y) pos.y++;
       if (pos.y > target.y) pos.y--;
-    }
+    } while (pos.x !== target.x || pos.y !== target.y);
+    grid[`${pos.x};${pos.y}`] = "#";
+    maxy = Math.max(maxy, pos.y);
+    maxx = Math.max(maxx, pos.x);
+    minx = Math.min(minx, pos.x);
   }
 });
 
@@ -188,7 +194,20 @@ while (i++ < 10000) {
   }
 }
 
-let part1 = Object.values(grid).filter(x => x === "o").length + 1;
+function printGrid() {
+  for (let y = 0; y <= maxy; y++) {
+    let line = "";
+    for (let x = minx-1; x <= maxx; x++) {
+      line += grid[`${x};${y}`] || ".";
+    }
+    console.log(line);
+  }
+  console.log();
+}
+
+printGrid();
+
+let part1 = Object.values(grid).filter(x => x === "o").length;
 
 let part2 = 0;
 
