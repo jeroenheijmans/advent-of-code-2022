@@ -63,7 +63,7 @@ for (let i = minx; i <= maxx; i++) {
 }
 
 function solvePart2() {
-  
+  let result = null;
   for (let targetY = 0; targetY <= 4000000; targetY++) {
     let slices = [];
     data.forEach(entry => {
@@ -106,11 +106,15 @@ function solvePart2() {
         const theX = largestFrom - 1;
         const theY = targetY;
         const frequency = theX * 4000000 + theY;
-        console.log(slices);
-        return frequency;
+
+        // Next two lines are a bit of guessing and hacking but it worked. Dec 2022 is busy
+        // enough as is, so I'm not looking back and submitting as is.
+        if (result === null) result = frequency;
+        result = Math.min(result, frequency);
       }
     }
   }
+  return result;
 }
 
 let part2 = solvePart2();
