@@ -62,7 +62,53 @@ for (let i = minx; i <= maxx; i++) {
   if (slices.some(s => i >= s.fromx && i < s.tox)) part1++;
 }
 
-let part2 = 0;
+function solvePart2() {
+  
+  for (let targetY = 0; targetY <= 4000000; targetY++) {
+    let slices = [];
+    data.forEach(entry => {
+      const dist = Math.abs(entry.sensorx - entry.beaconx) + Math.abs(entry.sensory - entry.beacony);
+      const ydiff = Math.abs(entry.sensory - targetY);
+      const xspread = dist - ydiff;
+
+      if (xspread <= 0) return;
+
+      const fromx = Math.max(0, entry.sensorx - xspread);
+      const tox = Math.min(4000000, entry.sensorx + xspread);
+      slices.push({fromx, tox});
+    });
+
+    let folded = false;
+    do {
+      folded = false;
+      for (let n = 0; n < slices.length; n++) {
+        if (folded) break;
+        for (let m = n + 1; m < slices.length; m++) {
+          if (folded) break;
+          if (slices[m].fromx > slices[n].tox + 1) continue;
+          if (slices[m].tox < slices[n].fromx - 1) continue;
+          newslice = {fromx: Math.min(slices[m].fromx, slices[n].fromx), tox: Math.max(slices[m].tox, slices[n].tox)};
+          slices = slices.filter(s => s !== slices[m] && s !== slices[n]);
+          slices.push(newslice);
+          folded = true;
+        }
+      }
+    } while (folded);
+
+    if (slices.length === 2) {
+      const smallestTo = Math.min(slices[0].tox, slices[1].tox);
+      const largestFrom = Math.max(slices[0].fromx, slices[1].fromx);
+      if (largestFrom - smallestTo === 2) {
+        const theX = largestFrom - 1;
+        const theY = targetY;
+        const frequency = theX * 4000000 + theY;
+        return frequency;
+      }
+    }
+  }
+}
+
+let part2 = solvePart2();
 
 console.log("Part 1", part1);
 console.log("Part 2", part2);
