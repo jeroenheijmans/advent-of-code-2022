@@ -98,10 +98,15 @@ function solvePart2() {
     if (slices.length === 2) {
       const smallestTo = Math.min(slices[0].tox, slices[1].tox);
       const largestFrom = Math.max(slices[0].fromx, slices[1].fromx);
-      if (largestFrom - smallestTo === 2) {
+
+      const smallestFrom = Math.min(slices[0].fromx, slices[1].fromx);
+      const largestTo = Math.max(slices[0].tox, slices[1].tox);
+
+      if (largestFrom - smallestTo === 2 && smallestFrom === 0 && largestTo === 4000000) {
         const theX = largestFrom - 1;
         const theY = targetY;
         const frequency = theX * 4000000 + theY;
+        console.log(slices);
         return frequency;
       }
     }
