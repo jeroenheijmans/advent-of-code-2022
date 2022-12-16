@@ -26,7 +26,7 @@ Here's something I learned for the various days of advent:
 12. Preparation would've been everything.
 13. Chaos brings energy.
 14. Calm brings clarity.
-15. Puzzle still TODO!
+15. Hacking around and not looking back is sometimes The Way.
 16. Puzzle still TODO!
 17. Puzzle still TODO!
 18. Puzzle still TODO!
