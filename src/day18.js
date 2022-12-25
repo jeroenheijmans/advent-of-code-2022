@@ -2171,6 +2171,8 @@ const input = `
 6,14,3
 `;
 
+const dropcoords = new Set(input.trim().split(/\r?\n/));
+
 const data = input
     .trim()
     .split(/\r?\n/)
@@ -2189,8 +2191,6 @@ data.forEach(droplet => {
   if (!data.some(other => other !== droplet && other[1] === droplet[1] && other[2] === droplet[2] && other[0] - droplet[0] === -1)) part1++;
 });
 
-let part2 = part1;
-
 let minx = Math.min(...data.map(droplet => droplet[0]));
 let miny = Math.min(...data.map(droplet => droplet[1]));
 let minz = Math.min(...data.map(droplet => droplet[2]));
@@ -2199,28 +2199,31 @@ let maxx = Math.max(...data.map(droplet => droplet[0]));
 let maxy = Math.max(...data.map(droplet => droplet[1]));
 let maxz = Math.max(...data.map(droplet => droplet[2]));
 
+const considered = new Set();
 const bubbles = new Set();
 
 data.forEach(droplet => {
-  for (x = droplet[0] - 1; x <= droplet[0] + 1; x += 2) {
-    for (y = droplet[1] - 1; y <= droplet[1] + 1; y += 2) {
-      for (z = droplet[2] - 1; z <= droplet[2] + 1; z += 2) {
+  for (x = droplet[0] - 1; x <= droplet[0] + 1; x++) {
+    for (y = droplet[1] - 1; y <= droplet[1] + 1; y++) {
+      for (z = droplet[2] - 1; z <= droplet[2] + 1; z++) {
         if (
-          data.some(droplet => droplet[0] === x && droplet[1] === y && droplet[2] - z === +1) &&
-          data.some(droplet => droplet[0] === x && droplet[1] === y && droplet[2] - z === -1) &&
-          data.some(droplet => droplet[0] === x && droplet[2] === z && droplet[1] - y === +1) &&
-          data.some(droplet => droplet[0] === x && droplet[2] === z && droplet[1] - y === -1) &&
-          data.some(droplet => droplet[1] === y && droplet[2] === z && droplet[0] - x === +1) &&
-          data.some(droplet => droplet[1] === y && droplet[2] === z && droplet[0] - x === -1)
+          data.some(other => other[0] === x && other[1] === y && other[2] - z === +1) &&
+          data.some(other => other[0] === x && other[1] === y && other[2] - z === -1) &&
+          data.some(other => other[0] === x && other[2] === z && other[1] - y === +1) &&
+          data.some(other => other[0] === x && other[2] === z && other[1] - y === -1) &&
+          data.some(other => other[1] === y && other[2] === z && other[0] - x === +1) &&
+          data.some(other => other[1] === y && other[2] === z && other[0] - x === -1)
         ) {
-          bubbles.add(data.join(","));
+          const coords = `${x},${y},${z}`;
+          if (!dropcoords.has(coords)) bubbles.add(coords);
         }
       }
     }
   }
 });
+console.log(bubbles);
 
-part2 -= bubbles.size * 6;
+let part2 = part1 - (bubbles.size * 6);
 
 console.log("Part 1:", part1);
 console.log("Part 1:", part2);
