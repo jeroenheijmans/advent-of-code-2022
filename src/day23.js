@@ -111,7 +111,10 @@ function print(elves) {
     }
 }
 
-for (let round = 0; round < 10; round++) {
+let part1 = 0;
+let part2 = 0;
+
+for (let round = 0; round < 1000; round++) {
     console.log("Round", round);
     // print(elves);
     // console.log();
@@ -150,18 +153,21 @@ for (let round = 0; round < 10; round++) {
             e.y = e.nextPos.y;
         });
 
-    if (elves.every(e => e.nextPos === null)) break;
+    if (elves.every(e => e.nextPos === null)) {
+        part2 = round + 1;
+        break;
+    }
+
+    if (round === 9) {
+        const minx = Math.min(...elves.map(e => e.x));
+        const maxx = Math.max(...elves.map(e => e.x));
+        const miny = Math.min(...elves.map(e => e.y));
+        const maxy = Math.max(...elves.map(e => e.y));
+        part1 = ((maxx - minx + 1) * (maxy - miny + 1)) - elves.length;
+    }
     
     directions = [...directions.slice(1), directions[0]];
 }
-print(elves);
-const minx = Math.min(...elves.map(e => e.x));
-const maxx = Math.max(...elves.map(e => e.x));
-const miny = Math.min(...elves.map(e => e.y));
-const maxy = Math.max(...elves.map(e => e.y));
-
-let part1 = ((maxx - minx + 1) * (maxy - miny + 1)) - elves.length;
-let part2 = 0;
 
 console.log("Part 1:", part1);
 console.log("Part 2:", part2);
