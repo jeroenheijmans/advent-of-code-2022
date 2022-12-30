@@ -32,7 +32,7 @@ Here's something I learned for the various days of advent:
 18. Puzzle still TODO!
 19. Puzzle still TODO!
 20. Off by -1 is different from off by 1.
-21. Puzzle still TODO!
+21. Sometimes you should never look back.
 22. Puzzle still TODO!
 23. Puzzle still TODO!
 24. Puzzle still TODO!
