@@ -34,7 +34,7 @@ Here's something I learned for the various days of advent:
 20. Off by -1 is different from off by 1.
 21. Sometimes you should never look back.
 22. Puzzle still TODO!
-23. Puzzle still TODO!
+23. Slow can still be good enough.
 24. Puzzle still TODO!
 25. Puzzle still TODO!
 
