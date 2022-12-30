@@ -5007,6 +5007,7 @@ class Nr {
 
     constructor(val, index) {
         this.val = parseInt(val);
+        this.fullval = parseInt(val) * 811589153
         this.index = index;
     }
 }
@@ -5040,61 +5041,56 @@ function showFull(data) {
         .map(nr => `[${nr.index}] ${nr.val.toString().padStart(2, " ")} - (Prev: ${nr.prev.val.toString().padStart(2, " ")}, Next: ${nr.next.val.toString().padStart(2, " ")})`)
 }
 
-data.slice(0).forEach(nr => {
-    // console.log("\n\n", showFull(data));
-    // console.log(nr.val.toString().padStart(2, " "), " moves around  -->", show(data));
-    for (let i = 0; i < Math.abs(nr.val); i++) {
-        if (nr.val < 0) {
-            // console.log("  - move ", i, "order => ", show(data));
-            const currentPrev = nr.prev;
-            const currentNext = nr.next;
 
-            currentPrev.prev.next = nr;
 
-            currentPrev.next = currentNext;
-            currentNext.prev = currentPrev;
+for (let n = 0; n < 10; n++) {
+    data.forEach(nr => {
+        for (let i = 0; i < Math.abs(nr.fullval % (data.length+1)); i++) {
+            if (nr.val < 0) {
+                const currentPrev = nr.prev;
+                const currentNext = nr.next;
 
-            nr.next = currentPrev;
-            nr.prev = currentPrev.prev;
+                currentPrev.prev.next = nr;
+                currentPrev.next = currentNext;
+                currentNext.prev = currentPrev;
+                nr.next = currentPrev;
+                nr.prev = currentPrev.prev;
+                currentPrev.prev = nr;
 
-            currentPrev.prev = nr;
+                const temp = currentPrev.index;
+                currentPrev.index = nr.index;
+                nr.index = temp;
+            } else {
+                const currentPrev = nr.prev;
+                const currentNext = nr.next;
 
-            const temp = currentPrev.index;
-            currentPrev.index = nr.index;
-            nr.index = temp;
-        } else {
-            // console.log("  + move ", i, "order => ", show(data));
-            const currentPrev = nr.prev;
-            const currentNext = nr.next;
+                currentNext.next.prev = nr;
+                currentPrev.next = currentNext;
+                currentNext.prev = currentPrev;
+                nr.next = currentNext.next;
+                nr.prev = currentNext;
+                currentNext.next = nr;
 
-            currentNext.next.prev = nr;
-
-            currentPrev.next = currentNext;
-            currentNext.prev = currentPrev;
-
-            nr.next = currentNext.next;
-            nr.prev = currentNext;
-
-            currentNext.next = nr;
-
-            const temp = currentNext.index;
-            currentNext.index = nr.index;
-            nr.index = temp;
+                const temp = currentNext.index;
+                currentNext.index = nr.index;
+                nr.index = temp;
+            }
         }
-    }
-});
-
-// console.log(data);
+    });
+}
 
 let part1 = 0;
+let part2 = 0;
 let current = data.find(nr => nr.val === 0);
 let i = 0;
 while (i++ < 3001) {
     current = current.next;
-    if (i % 1000 === 0) part1 += current.val;
+    if (i % 1000 === 0) {
+        part1 += current.val;
+        part2 += current.fullval;
+    }
 }
 
-let part2 = 0;
 
 // Solution here!
 
