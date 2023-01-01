@@ -1,4 +1,4 @@
-const input = `
+let input = `
 Valve JZ has flow rate=0; tunnels lead to valves IR, LY
 Valve KD has flow rate=0; tunnels lead to valves NJ, ZS
 Valve VW has flow rate=0; tunnels lead to valves IT, VH
@@ -53,6 +53,19 @@ Valve EJ has flow rate=0; tunnels lead to valves WL, CP
 Valve NJ has flow rate=6; tunnels lead to valves RV, KD, SG, SI, TA
 `;
 
+input2 = `
+Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
+Valve BB has flow rate=13; tunnels lead to valves CC, AA
+Valve CC has flow rate=2; tunnels lead to valves DD, BB
+Valve DD has flow rate=20; tunnels lead to valves CC, AA, EE
+Valve EE has flow rate=3; tunnels lead to valves FF, DD
+Valve FF has flow rate=0; tunnels lead to valves EE, GG
+Valve GG has flow rate=0; tunnels lead to valves FF, HH
+Valve HH has flow rate=22; tunnel leads to valve GG
+Valve II has flow rate=0; tunnels lead to valves AA, JJ
+Valve JJ has flow rate=21; tunnel leads to valve II
+`;
+
 const data = input
     .trim()
     .split(/\r?\n/)
@@ -84,15 +97,20 @@ class State {
         openValves = [],
         totalFlow = 0,
         releasedPressure = 0,
+        justCameFrom = null,
     ) {
         this.timeIndex = timeIndex;
         this.currentLocationKey = currentLocationKey;
         this.openValves = openValves.sort();
 
-        this.key = `${timeIndex};${currentLocationKey};${openValves.join(",")}`;
+        this.smallkey = `${currentLocationKey};${openValves.join(",")}`;
+        this.key = `${timeIndex};${this.smallkey}`;
 
         this.totalFlow = totalFlow;
         this.releasedPressure = releasedPressure;
+        this.justCameFrom = justCameFrom;
+
+        this.minimalPredictedTotalRelease = (30 - timeIndex) * totalFlow + releasedPressure;
     }
 }
 
@@ -106,21 +124,29 @@ for (let time = 0; time < 30; time++) {
     let newEdges = [];
     edges.forEach(state => {
         if (!state.openValves.includes(state.currentLocationKey)) {
-            newEdges.push(new State(
-                time,
-                state.currentLocationKey,
-                [...state.openValves, state.currentLocationKey],
-                state.totalFlow + locations[state.currentLocationKey].flow,
-                state.releasedPressure + state.totalFlow,
-            ));
+            if (locations[state.currentLocationKey].flow > 0) {
+                // Open valve!
+                newEdges.push(new State(
+                    time,
+                    state.currentLocationKey,
+                    [...state.openValves, state.currentLocationKey],
+                    state.totalFlow + locations[state.currentLocationKey].flow,
+                    state.releasedPressure + state.totalFlow,
+                ));
+            }
         }
-        locations[state.currentLocationKey].tunnels.forEach(target => {
+        locations[state.currentLocationKey].tunnels
+            .filter(target => target.key !== state.justCameFrom)
+            // TODO: Filter on dead ends by using a map of "opened valves" to "sensible locations"
+            .forEach(target => {
+            // Move to location
             newEdges.push(new State(
                 time,
                 target,
                 state.openValves.slice(),
                 state.totalFlow,
                 state.releasedPressure + state.totalFlow,
+                state.currentLocationKey,
             ));
         });
     });
