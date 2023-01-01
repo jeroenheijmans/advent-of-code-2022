@@ -63,83 +63,110 @@ const data = input
   .map(x => x.trim());
   ;
 
-const monkeys = [];
-let current = null;
-let number = 0;
-let itemid = 1001;
+function getMonkeys() {
+  const monkeys = [];
+  let current = null;
+  let number = 0;
+  let itemid = 1001;
 
-data.forEach(line => {
-  if (line.includes("Monkey ")) {
-    current = {
-      nr: number++,
-      items: [],
-      divisor: null,
-      operation: null,
-      iftrue: null,
-      iffalse: null,
-      inspections: 0,
-    };
-    monkeys.push(current);
-  }
-  if (line.includes("Starting items: ")) {
-    const stuff = line.replace("Starting items: ", "");
-    current.items = stuff.split(", ").map(x => ({ itemid: itemid++, worry: parseInt(x) }));
-  }
-  if (line.includes("Test: divisible by ")) {
-    const nr = parseInt(line.replace("Test: divisible by ", ""));
-    current.test = (lvl) => lvl % nr === 0;
-    current.divisor = nr;
-  }
-  if (line.includes("Operation: new = ")) {
-    const stuff = line.replace("Operation: new = old ", "");
-    let isAddition = stuff.includes("+ ");
-    if (stuff.includes("old")) {
-      if (isAddition) {
-        current.operation = (old) => old + old;
+  data.forEach(line => {
+    if (line.includes("Monkey ")) {
+      current = {
+        nr: number++,
+        items: [],
+        divisor: null,
+        operation: null,
+        iftrue: null,
+        iffalse: null,
+        inspections: 0,
+      };
+      monkeys.push(current);
+    }
+    if (line.includes("Starting items: ")) {
+      const stuff = line.replace("Starting items: ", "");
+      current.items = stuff.split(", ").map(x => ({ itemid: itemid++, worry: parseInt(x) }));
+    }
+    if (line.includes("Test: divisible by ")) {
+      const nr = parseInt(line.replace("Test: divisible by ", ""));
+      current.test = (lvl) => lvl % nr === 0;
+      current.divisor = nr;
+    }
+    if (line.includes("Operation: new = ")) {
+      const stuff = line.replace("Operation: new = old ", "");
+      let isAddition = stuff.includes("+ ");
+      if (stuff.includes("old")) {
+        if (isAddition) {
+          current.operation = (old) => old + old;
+        } else {
+          current.operation = (old) => old * old;
+        }
       } else {
-        current.operation = (old) => old * old;
-      }
-    } else {
-      const nr = parseInt(stuff.substring(2));
-      if (isAddition) {
-        current.operation = (old) => nr + old;
-      } else {
-        current.operation = (old) => nr * old;
+        const nr = parseInt(stuff.substring(2));
+        if (isAddition) {
+          current.operation = (old) => nr + old;
+        } else {
+          current.operation = (old) => nr * old;
+        }
       }
     }
-  }
-  if (line.includes("If true")) {
-    current.iftrue = parseInt(line.replace("If true: throw to monkey ", ""));
-  }
-  if (line.includes("If false")) {
-    current.iffalse = parseInt(line.replace("If false: throw to monkey ", ""));
-  }
-});
-
-const denominator = monkeys.map(m => m.divisor).reduce((acc, curr) => acc * curr, 1);
-
-for (let round = 0; round < 10000; round++) {
-  monkeys.forEach(monkey => {
-    for (let i = 0; i < monkey.items.length; i++) {
-      monkey.inspections++;
-      monkey.items[i].worry = monkey.operation(monkey.items[i].worry);
-      monkey.items[i].worry = monkey.items[i].worry % denominator;
-
-      if (monkey.test(monkey.items[i].worry)) {
-        monkeys[monkey.iftrue].items.push(monkey.items[i]);
-      } else {
-        monkeys[monkey.iffalse].items.push(monkey.items[i]);
-      }
-
+    if (line.includes("If true")) {
+      current.iftrue = parseInt(line.replace("If true: throw to monkey ", ""));
     }
-    monkey.items = [];
+    if (line.includes("If false")) {
+      current.iffalse = parseInt(line.replace("If false: throw to monkey ", ""));
+    }
   });
+  return monkeys;
 }
 
-let inspections1 = monkeys.map(m => m.inspections).sort((a,b) => b-a);
-let part1 = inspections1[0] * inspections1[1];
-let part2 = 0;
+function getMonkeyBusiness(monkeys) {
+  let sorted = monkeys.map(m => m.inspections).sort((a,b) => b-a);
+  return sorted[0] * sorted[1];
+}
 
-console.log("Part 1", part1);
-console.log("Part 2", part2);
+function part1(monkeys) {
+  for (let round = 0; round < 20; round++) {
+    monkeys.forEach(monkey => {
+      for (let i = 0; i < monkey.items.length; i++) {
+        monkey.inspections++;
+        monkey.items[i].worry = monkey.operation(monkey.items[i].worry);
+        monkey.items[i].worry = Math.trunc(monkey.items[i].worry / 3);
 
+        if (monkey.test(monkey.items[i].worry)) {
+          monkeys[monkey.iftrue].items.push(monkey.items[i]);
+        } else {
+          monkeys[monkey.iffalse].items.push(monkey.items[i]);
+        }
+
+      }
+      monkey.items = [];
+    });
+  }
+  return getMonkeyBusiness(monkeys);
+}
+
+function part2(monkeys) {
+  const denominator = monkeys.map(m => m.divisor).reduce((acc, curr) => acc * curr, 1);
+
+  for (let round = 0; round < 10000; round++) {
+    monkeys.forEach(monkey => {
+      for (let i = 0; i < monkey.items.length; i++) {
+        monkey.inspections++;
+        monkey.items[i].worry = monkey.operation(monkey.items[i].worry);
+        monkey.items[i].worry = monkey.items[i].worry % denominator;
+
+        if (monkey.test(monkey.items[i].worry)) {
+          monkeys[monkey.iftrue].items.push(monkey.items[i]);
+        } else {
+          monkeys[monkey.iffalse].items.push(monkey.items[i]);
+        }
+
+      }
+      monkey.items = [];
+    });
+  }
+  return getMonkeyBusiness(monkeys);
+}
+
+console.log("Part 1", part1(getMonkeys()));
+console.log("Part 2", part2(getMonkeys()));
