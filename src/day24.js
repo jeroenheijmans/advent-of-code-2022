@@ -1,11 +1,10 @@
 const input = `
-#.#####
-#.....#
-#>....#
-#.....#
-#...v.#
-#.....#
-#####.#
+#.######
+#>>.<^<#
+#.<..<<#
+#>v.><>#
+#<^v^^>#
+######.#
 `;
 
 const data = input
@@ -33,35 +32,86 @@ const initialBlizzardVectors = {
     ".": [],
 };
 
-const locationsPerTimeIndex = [[]];
+const width = data[0].length - 2;
+const height = data.length - 2;
 
-for (let y = 1; y < data.length - 1; y++) {
-    for (let x = 1; x < data[0].length - 1; x++) {
-        const loc = new Location(0, x, y, initialBlizzardVectors[data[y][x]]);
+const locationsPerTimeIndex = { 0: { } };
+const start = new Location(0, 0, -1);
+const end = new Location(0, width - 1, height);
+
+locationsPerTimeIndex[0][start.key] = start;
+locationsPerTimeIndex[0][end.key] = end;
+
+for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+        const loc = new Location(0, x, y, initialBlizzardVectors[data[y+1][x+1]]);
         locationsPerTimeIndex[0][loc.key] = loc;
     }
 }
 
-// link level 0 locations to each other
-
-for (let time = 1; time < 500; time++) {
-    locationsPerTimeIndex.push(
-        locationsPerTimeIndex[time - 1].map(oldLocation => new Location(
-            oldLocation.time + 1,
+for (let time = 1; time < 10; time++) {
+    locationsPerTimeIndex[time] = Object.values(locationsPerTimeIndex[time - 1])
+        .map(oldLocation => new Location(
+            time,
             oldLocation.x,
             oldLocation.y,
         ))
-    );
+        .reduce((acc, curr) => { acc[curr.key] = curr; return acc; }, {});
     
-    // set new blizzards based on old ones
-    // link locations to each other
+    Object.values(locationsPerTimeIndex[time - 1]).forEach(loc => {
+        loc.blizzards.forEach(blizzard => {
+            const newX = ((loc.x + blizzard[0]) + width) % width;
+            const newY = ((loc.y + blizzard[1]) + height) % height;
+            const newLoc = locationsPerTimeIndex[time][`${newX};${newY}`];
+            newLoc.blizzards.push(blizzard);
+        });
+    });
+
+    Object.values(locationsPerTimeIndex[time - 1]).forEach(loc => {
+        const potentialTargets = [
+            locationsPerTimeIndex[time][loc.key], // wait
+            locationsPerTimeIndex[time][`${loc.x - 0};${loc.y - 1}`], // north
+            locationsPerTimeIndex[time][`${loc.x + 1};${loc.y - 0}`], // east
+            locationsPerTimeIndex[time][`${loc.x - 0};${loc.y + 1}`], // south
+            locationsPerTimeIndex[time][`${loc.x - 1};${loc.y - 0}`], // west
+        ];
+
+        loc.targets = potentialTargets
+            .filter(t => !!t) // out of bounds, no node at coordinates found
+            .filter(t => t.blizzards.length === 0);
+    });
 }
+
+function printTime(time) {
+    for (let y = - 1; y < height + 1; y++) {
+        let line = "";
+        for (let x = -1; x < width + 1; x++) {
+            const key = `${x};${y}`;
+            if (!locationsPerTimeIndex[time][key]) {
+                line += "#";
+            } else if (locationsPerTimeIndex[time][key].blizzards.length === 0) {
+                line += ".";
+            } else if (locationsPerTimeIndex[time][key].blizzards.length === 1) {
+                line += Object.keys(initialBlizzardVectors)
+                    .find(k => initialBlizzardVectors[k][0] === locationsPerTimeIndex[time][key].blizzards[0]);
+            } else {
+                line += locationsPerTimeIndex[time][key].blizzards.length;
+            }
+        }
+        console.log(line);
+    }
+    console.log();
+}
+
+// printTime(0);
+// printTime(1);
+// printTime(2);
+// printTime(3);
+// printTime(4);
+// printTime(5);
 
 let part1 = 0;
 let part2 = 0;
-
-const start = { x: 1, y: 0 };
-const end = { x: data[data.length - 1].indexOf("."), y: data.length - 1 };
 
 // Search shortest path to end
 
