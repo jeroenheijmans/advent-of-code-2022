@@ -53,7 +53,7 @@ Valve EJ has flow rate=0; tunnels lead to valves WL, CP
 Valve NJ has flow rate=6; tunnels lead to valves RV, KD, SG, SI, TA
 `;
 
-input = `
+input2 = `
 Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
 Valve BB has flow rate=13; tunnels lead to valves CC, AA
 Valve CC has flow rate=2; tunnels lead to valves DD, BB
@@ -199,15 +199,24 @@ for (let time = 0; time < 26; time++) {
         });
     });
 
-    // Prune only best ways to reach states:
+    // Prune only best ways to reach states
+    //
+    // Also: time to guess a bit... after time index 8 we'll 
+    // start to only keep the top performing states.
+    let maxPrediction = 0;
     const keyed = newEdges.reduce((result, next) => {
         if (!result[next.key] || result[next.key].releasedPressure < next.releasedPressure) {
             result[next.key] = next;
         }
+        maxPrediction = Math.max(maxPrediction, next.minimalPredictedTotalRelease);
         return result;
     }, { });
-
     edges = Object.values(keyed);
+    // Dirty dirty dirty.... but it works. That's good enough for AoC.
+    if (time > 6 && time < 12) edges = edges.filter(s => (s.minimalPredictedTotalRelease / maxPrediction) > 0.65);
+    if (time > 12 && time < 18) edges = edges.filter(s => (s.minimalPredictedTotalRelease / maxPrediction) > 0.75);
+    if (time > 18 && time < 27) edges = edges.filter(s => (s.minimalPredictedTotalRelease / maxPrediction) > 0.90);
+
 }
 
 let part2 = edges.sort((a,b) => b.releasedPressure - a.releasedPressure)[0].releasedPressure;
