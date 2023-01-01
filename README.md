@@ -35,7 +35,7 @@ Here's something I learned for the various days of advent:
 21. Sometimes you should never look back.
 22. Puzzle still TODO!
 23. Slow can still be good enough.
-24. Puzzle still TODO!
+24. Being thorough can be rewarding.
 25. Puzzle still TODO!
 
 ## Compendium Repositories
