@@ -38,14 +38,14 @@ const input = `
 ####################################################################################################.#
 `;
 
-const maxDepth = 1000;
-
 const data = input
     .trim()
     .split(/\r?\n/)
     .filter(x => !!x)
     .map(x => x)
-    ;
+;
+
+const maxDepth = Math.min(1000, data.length * data.length * 2);
 
 class Location {
     constructor(time, x, y, blizzards = []) {
@@ -149,6 +149,8 @@ let part1 = 0;
 let part2 = 0;
 
 let edges = new Set([start]);
+let goals = [start, end, start, end];
+let nextStop = goals.pop();
 
 let time = 0;
 while (time++ < maxDepth) {
@@ -161,9 +163,18 @@ while (time++ < maxDepth) {
         }
         edge.targets.forEach(t => newEdges.add(t));
     });
-    if (Array.from(newEdges).find(loc => loc.x === end.x && loc.y === end.y)) {
+    if (part1 === 0 && Array.from(newEdges).find(loc => loc.x === end.x && loc.y === end.y)) {
         part1 = time;
-        break;
+    }
+    const currentGoal = Array.from(newEdges).find(loc => loc.x === nextStop.x && loc.y === nextStop.y);
+    if (currentGoal) {
+        console.log("Next goal:", nextStop.key, " - further goals:", goals.map(g => g.key).join(" >>> "));
+        newEdges = new Set([currentGoal])
+        nextStop = goals.pop();
+        if (goals.length === 0) {
+            part2 = time;
+            break;
+        }
     }
     edges = newEdges;
 }
