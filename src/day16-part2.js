@@ -53,7 +53,7 @@ Valve EJ has flow rate=0; tunnels lead to valves WL, CP
 Valve NJ has flow rate=6; tunnels lead to valves RV, KD, SG, SI, TA
 `;
 
-input2 = `
+input = `
 Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
 Valve BB has flow rate=13; tunnels lead to valves CC, AA
 Valve CC has flow rate=2; tunnels lead to valves DD, BB
@@ -94,60 +94,108 @@ class State {
     constructor(
         timeIndex,
         currentLocationKey,
+        elephantLocationKey,
         openValves = [],
         totalFlow = 0,
         releasedPressure = 0,
-        justCameFrom = null,
+        humanJustCameFrom = null,
+        elephantJustCameFrom = null,
     ) {
         this.timeIndex = timeIndex;
         this.currentLocationKey = currentLocationKey;
+        this.elephantLocationKey = elephantLocationKey;
         this.openValves = openValves.sort();
 
-        this.smallkey = `${currentLocationKey};${openValves.join(",")}`;
+        const parts = [currentLocationKey, elephantLocationKey].sort();
+        this.smallkey = `${parts.join(";")};${openValves.join(",")}`;
         this.key = `${timeIndex};${this.smallkey}`;
 
         this.totalFlow = totalFlow;
         this.releasedPressure = releasedPressure;
-        this.justCameFrom = justCameFrom;
+        this.humanJustCameFrom = humanJustCameFrom;
+        this.elephantJustCameFrom = elephantJustCameFrom;
 
         this.minimalPredictedTotalRelease = (30 - timeIndex) * totalFlow + releasedPressure;
     }
 }
 
-const start = new State(-1, "AA");
+const start = new State(-1, "AA", "AA");
 
 let edges = [start];
 
-for (let time = 0; time < 30; time++) {
+for (let time = 0; time < 26; time++) {
     console.log("Parsing time index", time, " - number of states:", edges.length);
-    // console.log(edges);
+
     let newEdges = [];
+
     edges.forEach(state => {
+        let humanCanOpenValve = false;
+        let elephantCanOpenValve = false;
+
         if (!state.openValves.includes(state.currentLocationKey)) {
             if (locations[state.currentLocationKey].flow > 0) {
-                // Open valve!
+                humanCanOpenValve = true;
+            }
+        }
+        if (!state.openValves.includes(state.elephantLocationKey)) {
+            if (locations[state.elephantLocationKey].flow > 0) {
+                elephantCanOpenValve = true;
+            }
+        }
+
+        const humanTargets = locations[state.currentLocationKey].tunnels.filter(x => x.key !== state.humanJustCameFrom);
+        const elephantTargets = locations[state.elephantLocationKey].tunnels.filter(x => x.key !== state.elephantJustCameFrom);
+
+        if (humanCanOpenValve) {
+            elephantTargets.forEach(et => {
                 newEdges.push(new State(
                     time,
                     state.currentLocationKey,
+                    et,
                     [...state.openValves, state.currentLocationKey],
                     state.totalFlow + locations[state.currentLocationKey].flow,
                     state.releasedPressure + state.totalFlow,
                 ));
-            }
+            });
         }
-        locations[state.currentLocationKey].tunnels
-            .filter(target => target.key !== state.justCameFrom)
-            // TODO: Filter on dead ends by using a map of "opened valves" to "sensible locations"
-            .forEach(target => {
-            // Move to location
+
+        if (elephantCanOpenValve) {
+            humanTargets.forEach(ht => {
+                newEdges.push(new State(
+                    time,
+                    ht,
+                    state.elephantLocationKey,
+                    [...state.openValves, state.elephantLocationKey],
+                    state.totalFlow + locations[state.elephantLocationKey].flow,
+                    state.releasedPressure + state.totalFlow,
+                ));
+            });
+        }
+
+        if (humanCanOpenValve && elephantCanOpenValve && state.currentLocationKey !== state.elephantLocationKey) {
             newEdges.push(new State(
                 time,
-                target,
-                state.openValves.slice(),
-                state.totalFlow,
-                state.releasedPressure + state.totalFlow,
                 state.currentLocationKey,
+                state.elephantLocationKey,
+                [...state.openValves, state.currentLocationKey, state.elephantLocationKey],
+                state.totalFlow + locations[state.currentLocationKey].flow + locations[state.elephantLocationKey].flow,
+                state.releasedPressure + state.totalFlow,
             ));
+        }
+
+        humanTargets.forEach(ht => {
+            elephantTargets.forEach(et => {
+                newEdges.push(new State(
+                    time,
+                    ht,
+                    et,
+                    state.openValves.slice(),
+                    state.totalFlow,
+                    state.releasedPressure + state.totalFlow,
+                    state.currentLocationKey,
+                    state.elephantLocationKey,
+                ));
+            });
         });
     });
 
@@ -162,8 +210,6 @@ for (let time = 0; time < 30; time++) {
     edges = Object.values(keyed);
 }
 
-let part1 = edges.sort((a,b) => b.releasedPressure - a.releasedPressure)[0].releasedPressure;
-let part2 = 0;
+let part2 = edges.sort((a,b) => b.releasedPressure - a.releasedPressure)[0].releasedPressure;
 
-console.log("Part 1:", part1);
 console.log("Part 2:", part2);
