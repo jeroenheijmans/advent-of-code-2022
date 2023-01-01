@@ -22,7 +22,7 @@ Here's something I learned for the various days of advent:
 8. Data structures are everything!
 9. Train rides are decent for puzzling.
 10. Off-by-one might be solvable through fault-tolerance.
-11. Puzzle still TODO!
+11. A few nights sleep could help.
 12. Preparation would've been everything.
 13. Chaos brings energy.
 14. Calm brings clarity.
