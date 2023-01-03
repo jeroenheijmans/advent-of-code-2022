@@ -29,7 +29,7 @@ Here's something I learned for the various days of advent:
 15. Hacking around and not looking back is sometimes The Way.
 16. Dirty isn't always bad.
 17. Dirty still *feels* dirty!
-18. Puzzle still TODO!
+18. Particle physics must be insanely tricky.
 19. Puzzle still TODO!
 20. Off by -1 is different from off by 1.
 21. Sometimes you should never look back.
