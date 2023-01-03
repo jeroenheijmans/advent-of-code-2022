@@ -1,4 +1,4 @@
-const input = `
+let input = `
 `;
 
 const data = input
@@ -14,4 +14,4 @@ let part2 = 0;
 // Solution here!
 
 console.log("Part 1:", part1);
-console.log("Part 1:", part2);
+console.log("Part 2:", part2);
