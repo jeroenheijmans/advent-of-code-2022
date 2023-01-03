@@ -2171,7 +2171,7 @@ let input = `
 6,14,3
 `;
 
-input = `
+inputExample = `
 2,2,2
 1,2,2
 3,2,2
@@ -2198,6 +2198,10 @@ class Droplet {
   isAdjecentTo(other) {
     return 1 === Math.abs(this.x - other.x) + Math.abs(this.y - other.y) + Math.abs(this.z - other.z);
   }
+
+  isSameAs(other) {
+    return other.x === this.x && other.y === this.y && other.z === this.z;
+  }
 }
 
 const droplets = input
@@ -2214,5 +2218,66 @@ droplets.forEach(drop => {
   part1 += 6 - droplets.filter(d => d.isAdjecentTo(drop)).length;
 });
 
+const minx = Math.min(...droplets.map(d => d.x));
+const miny = Math.min(...droplets.map(d => d.y));
+const minz = Math.min(...droplets.map(d => d.z));
+const maxx = Math.max(...droplets.map(d => d.x));
+const maxy = Math.max(...droplets.map(d => d.y));
+const maxz = Math.max(...droplets.map(d => d.z));
+
+const steam = [];
+for (let x = minx - 2; x <= maxx + 2; x++) {
+  for (let y = miny - 2; y <= maxy + 2; y++) {
+    for (let z = minz - 2; z <= maxz + 2; z++) {
+      
+      const isOuterXPositive = droplets.filter(d => d.y === y && d.z === z).every(d => d.x < x);
+      const isOuterYPositive = droplets.filter(d => d.x === x && d.z === z).every(d => d.y < y);
+      const isOuterZPositive = droplets.filter(d => d.x === x && d.y === y).every(d => d.z < z);
+      const isOuterXNegative = droplets.filter(d => d.y === y && d.z === z).every(d => d.x > x);
+      const isOuterYNegative = droplets.filter(d => d.x === x && d.z === z).every(d => d.y > y);
+      const isOuterZNegative = droplets.filter(d => d.x === x && d.y === y).every(d => d.z > z);
+
+      if (
+        isOuterXPositive
+        || isOuterYPositive
+        || isOuterZPositive
+        || isOuterXNegative
+        || isOuterYNegative
+        || isOuterZNegative
+      ) {
+        steam.push(new Droplet([x, y, z]));
+      }
+    }
+  }
+}
+
+let hasGrown = false, i = 0;
+do {
+  console.log("Loop nr", ++i);
+  hasGrown = false
+  for (let x = minx; x <= maxx; x++) {
+    for (let y = miny; y <= maxy; y++) {
+      for (let z = minz; z <= maxz; z++) {
+        const steamdrop = new Droplet([x, y, z]);
+        if (
+          !steam.some(s => steamdrop.isSameAs(s))
+          &&
+          !droplets.some(d => steamdrop.isSameAs(d))
+          &&
+          steam.some(s => s.isAdjecentTo(steamdrop))
+        ) {
+          steam.push(steamdrop);
+          hasGrown = true;
+        }
+      }
+    }
+  }
+} while (hasGrown);
+
+steam.forEach(steam => {
+  part2 += droplets.filter(d => d.isAdjecentTo(steam)).length;
+});
+
+
 console.log("Part 1:", part1);
-console.log("Part 1:", part2);
+console.log("Part 2:", part2);
