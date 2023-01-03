@@ -78,7 +78,7 @@ while (drops++ < maxDrops) {
 
     const maxy = Object.keys(lines).length;
     const endOfSearch = Math.trunc(maxy / 2);
-    const equal = (array1, array2) => array1.every((val, idx) => val === array2[idx]);
+    const equal = (array1, array2) => array1.length === array2.length && array1.every((val, idx) => val === array2[idx]);
 
     for (let len = 20; len < endOfSearch; len++) {
         let linesAreAllEqual = true;
