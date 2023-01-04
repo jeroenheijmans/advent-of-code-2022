@@ -283,7 +283,7 @@ const directions = {
 let edgerotations = {
     1: {
         "^": { newdir: ">", newarea: 6, other: loc => locations.find(b => b.x === 0 && b.y === esize * 3 + (loc.x - esize)) },
-        "<": { newdir: "^", newarea: 5, other: loc => locations.find(b => b.x === 0 && b.y === esize * 2 + (esize - 1 - loc.y)) },
+        "<": { newdir: ">", newarea: 5, other: loc => locations.find(b => b.x === 0 && b.y === esize * 2 + (esize - 1 - loc.y)) },
     },
     2: {
         "^": { newdir: "^", newarea: 6, other: loc => locations.find(b => b.x === loc.x - 2*esize && b.y === esize * 4 - 1) },
@@ -295,7 +295,7 @@ let edgerotations = {
         "<": { newdir: "v", newarea: 5, other: loc => locations.find(b => b.x === (loc.y-esize) && b.y === 2*esize) },
     },
     4: {
-        ">": { newdir: ">", newarea: 2, other: loc => locations.find(b => b.x === (esize*3-1) && b.y === loc.y - 2*esize) },
+        ">": { newdir: "<", newarea: 2, other: loc => locations.find(b => b.x === (esize*3-1) && b.y === esize-1-(loc.y - esize*2)) },
         "v": { newdir: "<", newarea: 6, other: loc => locations.find(b => b.x === esize-1 && b.y === 3*esize + (loc.x-esize)) },
     },
     5: {
@@ -306,35 +306,6 @@ let edgerotations = {
         ">": { newdir: "^", newarea: 4, other: loc => locations.find(b => b.x === esize + (loc.y - 3*esize) && b.y === esize*3 - 1) },
         "<": { newdir: "v", newarea: 1, other: loc => locations.find(b => b.x === esize + (loc.y - esize*3) && b.y === 0) },
         "v": { newdir: "v", newarea: 2, other: loc => locations.find(b => b.x === loc.x + 2*esize && b.y === 0) },
-    },
-};
-
-edgerotationssample = {
-    1: {
-        "<": { newdir: "v", newarea: 3, other: loc => locations.find(b => b.x === esize + loc.y && b.y === esize) },
-        "^": { newdir: "v", newarea: 2, other: loc => locations.find(b => b.x === loc.x - esize*2 && b.y === esize) },
-        ">": { newdir: "<", newarea: 6, other: loc => locations.find(b => b.x === esize * 4 - 1 && b.y === esize * 2 + loc.y) },
-    },
-    2: {
-        "<": { newdir: "^", newarea: 6, other: loc => locations.find(b => b.x === loc.y + 2 * esize && b.y === esize * 2) },
-        "^": { newdir: "v", newarea: 1, other: loc => locations.find(b => b.x === esize * 3 - 1 - loc.x && b.y === 0) },
-        "v": { newdir: "^", newarea: 5, other: loc => locations.find(b => b.x === esize * 3 - 1 - loc.x && b.y === esize * 3 - 1) },
-    },
-    3: {
-        "^": { newdir: ">", newarea: 1, other: loc => locations.find(b => b.x === esize * 2 && b.y === loc.x - esize) },
-        "v": { newdir: ">", newarea: 5, other: loc => locations.find(b => b.x === esize * 2 && b.y === loc.x + esize) },
-    },
-    4: {
-        ">": { newdir: "v", newarea: 6, other: loc => locations.find(b => b.x === (esize*4-1)-(loc.y - esize) && b.y === esize * 2) },
-    },
-    5: {
-        "<": { newdir: "^", newarea: 3, other: loc => locations.find(b => b.x === loc.y - esize && b.y === esize) },
-        "v": { newdir: "^", newarea: 2, other: loc => locations.find(b => b.x === esize - 1 - (loc.x - 2*esize) && b.y === esize * 2 - 1) },
-    },
-    6: {
-        "^": { newdir: "<", newarea: 4, other: loc => locations.find(b => b.x === esize * 3 - 1 && b.y === (loc.x - 3*esize) + esize) },
-        ">": { newdir: "<", newarea: 1, other: loc => locations.find(b => b.x === esize * 3 - 1 && b.y === esize - 1 - (loc.y - 2*esize)) },
-        "v": { newdir: ">", newarea: 2, other: loc => locations.find(b => b.x === 0 && b.y === (loc.x - 3*esize) + esize) },
     },
 };
 
