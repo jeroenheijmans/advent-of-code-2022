@@ -258,8 +258,8 @@ for (let y = 0; y < lines.length; y++) {
 }
 
 const directions = {
-    "<": [+1,  0],
-    ">": [-1,  0],
+    "<": [-1,  0],
+    ">": [+1,  0],
     "v": [ 0, +1],
     "^": [ 0, -1],
 };
@@ -276,10 +276,10 @@ locations.forEach(location => {
         if (!neighbor) {
             // gotta wrap around...
             
-            if (dir === "<") neighborX = Math.min(...locations.filter(l => l.y === location.y).map(l => l.x));
-            if (dir === ">") neighborX = Math.max(...locations.filter(l => l.y === location.y).map(l => l.x));
-            if (dir === "^") neighborY = Math.min(...locations.filter(l => l.x === location.x).map(l => l.y));
-            if (dir === "v") neighborY = Math.max(...locations.filter(l => l.x === location.x).map(l => l.y));
+            if (dir === ">") neighborX = Math.min(...locations.filter(l => l.y === location.y).map(l => l.x));
+            if (dir === "<") neighborX = Math.max(...locations.filter(l => l.y === location.y).map(l => l.x));
+            if (dir === "v") neighborY = Math.min(...locations.filter(l => l.x === location.x).map(l => l.y));
+            if (dir === "^") neighborY = Math.max(...locations.filter(l => l.x === location.x).map(l => l.y));
             neighborKey = `${neighborX};${neighborY}`;
             neighbor = board[neighborKey];
             if (!neighbor) throw new Error("Could not even wrap around, found a bug...");
@@ -294,37 +294,61 @@ let part2 = 0;
 
 const turning = {
     "R": {
-        "^": "<",
-        "<": "v",
-        "v": ">",
-        ">": "^",
-    },
-    "L": {
         "^": ">",
         ">": "v",
         "v": "<",
         "<": "^",
     },
+    "L": {
+        "^": "<",
+        "<": "v",
+        "v": ">",
+        ">": "^",
+    },
 };
 
-const facing = { "<": 0, "v": 1, ">": 2, "^": 3 };
+const facing = { ">": 0, "v": 1, "<": 2, "^": 3 };
 
 function simulate(location) {
-    let direction = "<";
+    let direction = ">";
+    const path = [{ location, direction }];
+    
     for (let idx = 0; idx < instructions.length; idx++) {
         if (idx % 2 === 0) {
             // Move!
             const steps = parseInt(instructions[idx]);
+            console.log("Moving", steps, "to", direction);
             for (let n = 0; n < steps; n++) {
                 if (location[direction].isWall) break; // Hit a wall!
                 location = location[direction]; // Move one step.
+                path.push({ location, direction });
             }
         } else {
             // Turn!
             direction = turning[instructions[idx]][direction];
         }
     }
-    return 1000 * (location.y - 1) + 4 * (location.x - 1) + facing[direction];
+
+    for (let y = 0; y < lines.length; y++) {
+        let line = "";
+        for (let x = 0; x < lines[y].length; x++) {
+            const key = `${x};${y}`;
+            const visit = path.find(entry => entry.location.x === x && entry.location.y === y);
+            
+            if (!board[key]) {
+                if (visit) throw new Error("Visited nonexistent location?");
+                line += " ";
+            } else if (visit) {
+                if (visit.isWall) throw new Error("Visited wall!?");
+                line += visit.direction;
+            } else {
+                line += board[key].isWall ? "#" : ".";
+            }
+        }
+        console.log(line);
+    }
+
+    return 1000 * (location.y + 1) + 4 * (location.x + 1) + facing[direction];
 }
 
 console.log("Part 1:", simulate(start));
