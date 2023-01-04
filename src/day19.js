@@ -172,38 +172,40 @@ function simulate(blueprint) {
             if (visited.has(key)) return;
             visited.add(key);
 
-            let constructables = blueprint.constructableRobotsFor(state.resources);
-            
-            if (constructables.length > 0) {
+            const constructables = blueprint.constructableRobotsFor(state.resources);
+            constructables.forEach(robotKey => {
+                if (robotKey === "obsidian" && time > 21) return;
+                if (robotKey === "clay" && time > 18) return;
+                if (robotKey === "ore" && time > 15) return;
                 const newState = state.cloneForTime(time);
-                newState.payForRobot(blueprint, constructables[0]);
+                newState.payForRobot(blueprint, robotKey);
                 newState.collect();
-                newState.robots[constructables[0]]++;
+                newState.robots[robotKey]++;
                 newStates.push(newState);
-            };
+            });
+            
 
-            // Also add a state where no robot is constructed:
-            // Initialize new state:
-            const newState = state.cloneForTime(time);
-            newState.collect();
-            newStates.push(newState);
+            // Also add a state where no robot is constructed, but only if none could be constructed:
+            if (constructables.length < 4) {
+                const newState = state.cloneForTime(time);
+                newState.collect();
+                newStates.push(newState);
+            }
         });
 
         states = newStates;
 
         // Prune less promising states with some guessing:
-        // if (time > 8) {
-        //     states = states.filter(s => s.robots.clay > 0);
-        // }
-        // if (time > 15) {
-        //     states = states.filter(s => s.robots.obsidian > 0);
-        // }
-        // if (time > 20) {
-        //     states = states.filter(s => s.robots.geode > 0);
-        // }
-        // if (time > 22) {
-        //     states = states.filter(s => s.resources.geode > 1);
-        // }
+        if (time > 10) {
+            states = states.filter(s => s.robots.clay > 0);
+        }
+        if (time > 16) {
+            states = states.filter(s => s.robots.obsidian > 0);
+        }
+        if (time > 21) {
+            const temp = states.filter(s => s.robots.geode > 0);
+            if (temp.length > 0) states = temp;
+        }
     }
 
     console.log("Blueprint", blueprint.id, "best end state calculation...");
