@@ -25,10 +25,11 @@ class Robot {
         this.costs = data
             .split(" and ")
             .map(x => x.split(" "))
-            .reduce((result, next) => {
-                result[next[1]] = parseInt(next[0]);
-                return result;
-            }, {});
+            .map(x => ({ key: x[1], value: parseInt(x[0]) }));
+    }
+
+    canBeConstructedFrom(resources) {
+        return this.costs.every(cost => resources[cost.key] >= cost.value);
     }
 }
 
@@ -39,7 +40,16 @@ class Blueprint {
         this.clay = clay;
         this.obsidian = obsidian;
         this.geode = geode;
-    } 
+    }
+
+    constructableRobotsFor(resources) {
+        const result = [];
+        if (this.ore.canBeConstructedFrom(resources)) result.push("ore");
+        if (this.clay.canBeConstructedFrom(resources)) result.push("clay");
+        if (this.obsidian.canBeConstructedFrom(resources)) result.push("obsidian");
+        if (this.geode.canBeConstructedFrom(resources)) result.push("geode");
+        return result;
+    }
 }
 
 const blueprints = input
@@ -58,6 +68,103 @@ const blueprints = input
         );
     });
 
+class Resources {
+    constructor(ore = 0, clay = 0, obsidian = 0, geode = 0) {
+        this.ore = ore;
+        this.clay = clay;
+        this.obsidian = obsidian;
+        this.geode = geode;
+    }
+
+    clone() {
+        return new Resources(this.ore, this.clay, this.obsidian, this.geode);
+    }
+}
+
+class RobotCollection {
+    constructor(ore = 1, clay = 0, obsidian = 0, geode = 0) {
+        this.ore = ore;
+        this.clay = clay;
+        this.obsidian = obsidian;
+        this.geode = geode;
+    }
+
+    clone() {
+        return new Resources(this.ore, this.clay, this.obsidian, this.geode);
+    }
+}
+
+class State {
+    constructor(time, resources, robots) {
+        this.time = time;
+        this.resources = resources;
+        this.robots = robots;
+    }
+
+    // TODO: Perhaps more efficient to only update it when needed
+    // instead of running stringification every time a change is
+    // done?
+    get key() {
+        // Time doesn't matter for the key, reaching the same
+        // combination of resources+robots is no bueno ever.
+        return JSON.stringify({ res: this.resources, rob: this.robots });
+    }
+
+    collect() {
+        this.resources.ore += this.robots.ore * 1;
+        this.resources.clay += this.robots.clay * 1;
+        this.resources.obsidian += this.robots.obsidian * 1;
+        this.resources.geode += this.robots.geode * 1;
+    }
+
+    cloneForTime(time) {
+        return new State(time, this.resources.clone(), this.robots.clone());
+    }
+
+    payForRobot(blueprint, newRobotKey) {
+        blueprint[newRobotKey].costs.forEach(c => {
+            this.resources[c.key] -= c.value;
+        });
+    }
+}
+
+function simulate(blueprint) {
+    const start = new State(1, new Resources(), new RobotCollection());
+    let visited = new Set();
+    let states = [start];
+
+    for (let time = 2; time <= 5; time++) {
+        console.log("\n----------------\nAt time", time);
+        console.log(states);
+
+        let newStates = [];
+
+        states.forEach(state => {
+            if (visited.has(state.key)) return;
+            visited.add(state.key);
+
+            blueprint.constructableRobotsFor(state.resources).forEach(newRobotKey => {
+                const newState = state.cloneForTime(time);
+                newState.payForRobot(blueprint, newRobotKey);
+                newState.collect();
+                newState.robots[newRobotKey]++;
+                newStates.push(newState);
+            });
+
+            // Also add a state where no robot is constructed:
+            // Initialize new state:
+            const newState = state.cloneForTime(time);
+            newState.collect();
+            newStates.push(newState);
+        });
+
+        states = newStates;
+
+        // TODO: Prune less promising states...
+    }
+}
+
+simulate(blueprints[0]);
 
 
 let part1 = 0;
