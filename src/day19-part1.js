@@ -160,7 +160,7 @@ function simulate(blueprint) {
     let visited = new Set();
     let states = [start];
 
-    for (let time = 1; time <= 24; time++) {
+    for (let time = 1; time <= 32; time++) {
         // console.log("\n----------------");
         console.log("At time", time, " - length of states:", states.length);
         // console.log(states);
@@ -174,9 +174,9 @@ function simulate(blueprint) {
 
             const constructables = blueprint.constructableRobotsFor(state.resources);
             constructables.forEach(robotKey => {
-                if (robotKey === "obsidian" && time > 21) return;
-                if (robotKey === "clay" && time > 18) return;
-                if (robotKey === "ore" && time > 15) return;
+                if (robotKey === "obsidian" && time > 29) return;
+                if (robotKey === "clay" && time > 26) return;
+                if (robotKey === "ore" && time > 23) return;
                 const newState = state.cloneForTime(time);
                 newState.payForRobot(blueprint, robotKey);
                 newState.collect();
@@ -196,13 +196,13 @@ function simulate(blueprint) {
         states = newStates;
 
         // Prune less promising states with some guessing:
-        if (time > 10) {
+        if (time > 20) {
             states = states.filter(s => s.robots.clay > 0);
         }
-        if (time > 16) {
+        if (time > 24) {
             states = states.filter(s => s.robots.obsidian > 0);
         }
-        if (time > 21) {
+        if (time > 25) {
             const temp = states.filter(s => s.robots.geode > 0);
             if (temp.length > 0) states = temp;
         }
@@ -214,8 +214,6 @@ function simulate(blueprint) {
     return result;
 }
 
-let part1 = blueprints.map(b => simulate(b) * b.id).reduce((a,b) => a+b);
-let part2 = 0;
+let part1 = blueprints.slice(0, 3).map(b => simulate(b)).reduce((a,b) => a*b);
 
-console.log("Part 1:", part1);
-console.log("Part 2:", part2);
+console.log("Part 1:", part2);
