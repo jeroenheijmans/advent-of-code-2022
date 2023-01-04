@@ -30,7 +30,7 @@ Here's something I learned for the various days of advent:
 16. Dirty isn't always bad.
 17. Dirty still *feels* dirty!
 18. Particle physics must be insanely tricky.
-19. Puzzle still TODO!
+19. Code most work for reasonable inputs. No more.
 20. Off by -1 is different from off by 1.
 21. Sometimes you should never look back.
 22. Puzzle still TODO!
