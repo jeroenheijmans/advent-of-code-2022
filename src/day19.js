@@ -1,7 +1,37 @@
 let input = `
+Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 4 ore. Each obsidian robot costs 3 ore and 19 clay. Each geode robot costs 4 ore and 15 obsidian.
+Blueprint 2: Each ore robot costs 4 ore. Each clay robot costs 3 ore. Each obsidian robot costs 2 ore and 20 clay. Each geode robot costs 2 ore and 9 obsidian.
+Blueprint 3: Each ore robot costs 4 ore. Each clay robot costs 3 ore. Each obsidian robot costs 4 ore and 19 clay. Each geode robot costs 4 ore and 12 obsidian.
+Blueprint 4: Each ore robot costs 3 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 17 clay. Each geode robot costs 2 ore and 13 obsidian.
+Blueprint 5: Each ore robot costs 2 ore. Each clay robot costs 4 ore. Each obsidian robot costs 4 ore and 16 clay. Each geode robot costs 3 ore and 13 obsidian.
+Blueprint 6: Each ore robot costs 4 ore. Each clay robot costs 4 ore. Each obsidian robot costs 4 ore and 16 clay. Each geode robot costs 2 ore and 15 obsidian.
+Blueprint 7: Each ore robot costs 3 ore. Each clay robot costs 4 ore. Each obsidian robot costs 4 ore and 6 clay. Each geode robot costs 3 ore and 16 obsidian.
+Blueprint 8: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 11 clay. Each geode robot costs 3 ore and 14 obsidian.
+Blueprint 9: Each ore robot costs 3 ore. Each clay robot costs 3 ore. Each obsidian robot costs 2 ore and 11 clay. Each geode robot costs 2 ore and 19 obsidian.
+Blueprint 10: Each ore robot costs 3 ore. Each clay robot costs 3 ore. Each obsidian robot costs 2 ore and 19 clay. Each geode robot costs 2 ore and 12 obsidian.
+Blueprint 11: Each ore robot costs 4 ore. Each clay robot costs 4 ore. Each obsidian robot costs 4 ore and 7 clay. Each geode robot costs 2 ore and 16 obsidian.
+Blueprint 12: Each ore robot costs 2 ore. Each clay robot costs 2 ore. Each obsidian robot costs 2 ore and 7 clay. Each geode robot costs 2 ore and 14 obsidian.
+Blueprint 13: Each ore robot costs 2 ore. Each clay robot costs 4 ore. Each obsidian robot costs 4 ore and 11 clay. Each geode robot costs 3 ore and 8 obsidian.
+Blueprint 14: Each ore robot costs 4 ore. Each clay robot costs 4 ore. Each obsidian robot costs 3 ore and 14 clay. Each geode robot costs 4 ore and 8 obsidian.
+Blueprint 15: Each ore robot costs 3 ore. Each clay robot costs 4 ore. Each obsidian robot costs 3 ore and 16 clay. Each geode robot costs 3 ore and 14 obsidian.
+Blueprint 16: Each ore robot costs 4 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 18 clay. Each geode robot costs 4 ore and 8 obsidian.
+Blueprint 17: Each ore robot costs 4 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 11 clay. Each geode robot costs 4 ore and 7 obsidian.
+Blueprint 18: Each ore robot costs 4 ore. Each clay robot costs 4 ore. Each obsidian robot costs 2 ore and 8 clay. Each geode robot costs 3 ore and 9 obsidian.
+Blueprint 19: Each ore robot costs 2 ore. Each clay robot costs 4 ore. Each obsidian robot costs 4 ore and 13 clay. Each geode robot costs 3 ore and 11 obsidian.
+Blueprint 20: Each ore robot costs 4 ore. Each clay robot costs 4 ore. Each obsidian robot costs 2 ore and 17 clay. Each geode robot costs 3 ore and 11 obsidian.
+Blueprint 21: Each ore robot costs 3 ore. Each clay robot costs 3 ore. Each obsidian robot costs 2 ore and 20 clay. Each geode robot costs 3 ore and 18 obsidian.
+Blueprint 22: Each ore robot costs 3 ore. Each clay robot costs 4 ore. Each obsidian robot costs 3 ore and 20 clay. Each geode robot costs 3 ore and 14 obsidian.
+Blueprint 23: Each ore robot costs 4 ore. Each clay robot costs 3 ore. Each obsidian robot costs 2 ore and 7 clay. Each geode robot costs 3 ore and 8 obsidian.
+Blueprint 24: Each ore robot costs 4 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 20 clay. Each geode robot costs 2 ore and 19 obsidian.
+Blueprint 25: Each ore robot costs 2 ore. Each clay robot costs 4 ore. Each obsidian robot costs 2 ore and 20 clay. Each geode robot costs 3 ore and 15 obsidian.
+Blueprint 26: Each ore robot costs 3 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 19 clay. Each geode robot costs 3 ore and 17 obsidian.
+Blueprint 27: Each ore robot costs 4 ore. Each clay robot costs 4 ore. Each obsidian robot costs 2 ore and 9 clay. Each geode robot costs 3 ore and 19 obsidian.
+Blueprint 28: Each ore robot costs 3 ore. Each clay robot costs 3 ore. Each obsidian robot costs 2 ore and 19 clay. Each geode robot costs 2 ore and 20 obsidian.
+Blueprint 29: Each ore robot costs 4 ore. Each clay robot costs 4 ore. Each obsidian robot costs 2 ore and 10 clay. Each geode robot costs 3 ore and 14 obsidian.
+Blueprint 30: Each ore robot costs 4 ore. Each clay robot costs 4 ore. Each obsidian robot costs 4 ore and 12 clay. Each geode robot costs 4 ore and 19 obsidian.
 `;
 
-input = `
+input2 = `
 Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 2 ore. Each obsidian robot costs 3 ore and 14 clay. Each geode robot costs 2 ore and 7 obsidian.
 Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 8 clay. Each geode robot costs 3 ore and 12 obsidian.
 `;
@@ -44,10 +74,10 @@ class Blueprint {
 
     constructableRobotsFor(resources) {
         const result = [];
-        if (this.ore.canBeConstructedFrom(resources)) result.push("ore");
-        if (this.clay.canBeConstructedFrom(resources)) result.push("clay");
-        if (this.obsidian.canBeConstructedFrom(resources)) result.push("obsidian");
         if (this.geode.canBeConstructedFrom(resources)) result.push("geode");
+        if (this.obsidian.canBeConstructedFrom(resources)) result.push("obsidian");
+        if (this.clay.canBeConstructedFrom(resources)) result.push("clay");
+        if (this.ore.canBeConstructedFrom(resources)) result.push("ore");
         return result;
     }
 }
@@ -101,10 +131,7 @@ class State {
         this.robots = robots;
     }
 
-    // TODO: Perhaps more efficient to only update it when needed
-    // instead of running stringification every time a change is
-    // done?
-    get key() {
+    generateKey() {
         // Time doesn't matter for the key, reaching the same
         // combination of resources+robots is no bueno ever.
         return JSON.stringify({ res: this.resources, rob: this.robots });
@@ -133,23 +160,27 @@ function simulate(blueprint) {
     let visited = new Set();
     let states = [start];
 
-    for (let time = 2; time <= 5; time++) {
-        console.log("\n----------------\nAt time", time);
-        console.log(states);
+    for (let time = 1; time <= 24; time++) {
+        // console.log("\n----------------");
+        console.log("At time", time, " - length of states:", states.length);
+        // console.log(states);
 
         let newStates = [];
 
         states.forEach(state => {
-            if (visited.has(state.key)) return;
-            visited.add(state.key);
+            const key = state.generateKey();
+            if (visited.has(key)) return;
+            visited.add(key);
 
-            blueprint.constructableRobotsFor(state.resources).forEach(newRobotKey => {
+            let constructables = blueprint.constructableRobotsFor(state.resources);
+            
+            if (constructables.length > 0) {
                 const newState = state.cloneForTime(time);
-                newState.payForRobot(blueprint, newRobotKey);
+                newState.payForRobot(blueprint, constructables[0]);
                 newState.collect();
-                newState.robots[newRobotKey]++;
+                newState.robots[constructables[0]]++;
                 newStates.push(newState);
-            });
+            };
 
             // Also add a state where no robot is constructed:
             // Initialize new state:
@@ -160,17 +191,29 @@ function simulate(blueprint) {
 
         states = newStates;
 
-        // TODO: Prune less promising states...
+        // Prune less promising states with some guessing:
+        // if (time > 8) {
+        //     states = states.filter(s => s.robots.clay > 0);
+        // }
+        // if (time > 15) {
+        //     states = states.filter(s => s.robots.obsidian > 0);
+        // }
+        // if (time > 20) {
+        //     states = states.filter(s => s.robots.geode > 0);
+        // }
+        // if (time > 22) {
+        //     states = states.filter(s => s.resources.geode > 1);
+        // }
     }
+
+    console.log("Blueprint", blueprint.id, "best end state calculation...");
+    const result = states.map(s => s.resources.geode).reduce((acc, curr) => Math.max(acc,curr), 0);
+    console.log("...resulted in", result);
+    return result;
 }
 
-simulate(blueprints[0]);
-
-
-let part1 = 0;
+let part1 = blueprints.map(b => simulate(b) * b.id).reduce((a,b) => a+b);
 let part2 = 0;
-
-// Solution here!
 
 console.log("Part 1:", part1);
 console.log("Part 2:", part2);
