@@ -33,7 +33,7 @@ Here's something I learned for the various days of advent:
 19. Code most work for reasonable inputs. No more.
 20. Off by -1 is different from off by 1.
 21. Sometimes you should never look back.
-22. Puzzle still TODO!
+22. Tiredness can be postponed (to a degree).
 23. Slow can still be good enough.
 24. Being thorough can be rewarding.
 25. Puzzle still TODO!
