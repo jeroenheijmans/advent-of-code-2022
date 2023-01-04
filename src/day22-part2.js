@@ -245,18 +245,18 @@ class Location {
 
 const board = {};
 const lines = data.filter(line => line.includes("."));
-const edgesize = lines.length / 3;
+const esize = lines.length / 4;
 let start = null;
 
 for (let y = 0; y < lines.length; y++) {
     for (let x = 0; x < lines[y].length; x++) {
         if (lines[y][x] !== " ") {
             let area = null;
-            if (y < edgesize) area = 1;
-            else if (y < edgesize * 2 && x < edgesize) area = 2;
-            else if (y < edgesize * 2 && x >= edgesize && x < edgesize * 2) area = 3;
-            else if (y < edgesize * 2 && x >= edgesize * 2) area = 4;
-            else if (x < edgesize * 3) area = 5;
+            if (y < esize && x < 2*esize) area = 1;
+            else if (y < esize) area = 2;
+            else if (y < esize * 2) area = 3;
+            else if (y < esize * 3 && x < esize) area = 5;
+            else if (y < esize * 3) area = 4;
             else area = 6;
 
             const isWall = lines[y][x] === "#";
@@ -270,7 +270,7 @@ for (let y = 0; y < lines.length; y++) {
 const locations = Object.values(board);
 
 // All areas should have same size:
-console.log(edgesize);
+console.log(esize);
 console.log(locations.reduce((a,c) => { a[c.area]++; return a; }, {1:0, 2:0, 3:0, 4:0, 5:0, 6:0}))
 
 const directions = {
@@ -280,32 +280,61 @@ const directions = {
     "^": [ 0, -1],
 };
 
-const edgerotations = {
+let edgerotations = {
     1: {
-        "<": { newdir: "v", newarea: 3, other: loc => locations.find(b => b.x === edgesize + loc.y && b.y === edgesize) },
-        "^": { newdir: "v", newarea: 2, other: loc => locations.find(b => b.x === loc.x - edgesize*2 && b.y === edgesize) },
-        ">": { newdir: "<", newarea: 6, other: loc => locations.find(b => b.x === edgesize * 4 - 1 && b.y === edgesize * 2 + loc.y) },
+        "^": { newdir: ">", newarea: 6, other: loc => locations.find(b => b.x === 0 && b.y === esize * 3 + (loc.x - esize)) },
+        "<": { newdir: "^", newarea: 5, other: loc => locations.find(b => b.x === 0 && b.y === esize * 2 + (esize - 1 - loc.y)) },
     },
     2: {
-        "<": { newdir: "^", newarea: 6, other: loc => locations.find(b => b.x === loc.y + 2 * edgesize && b.y === edgesize * 2) },
-        "^": { newdir: "v", newarea: 1, other: loc => locations.find(b => b.x === edgesize * 3 - 1 - loc.x && b.y === 0) },
-        "v": { newdir: "^", newarea: 5, other: loc => locations.find(b => b.x === edgesize * 3 - 1 - loc.x && b.y === edgesize * 3 - 1) },
+        "^": { newdir: "^", newarea: 6, other: loc => locations.find(b => b.x === loc.x - 2*esize && b.y === esize * 4 - 1) },
+        ">": { newdir: "<", newarea: 4, other: loc => locations.find(b => b.x === esize * 2 - 1 && b.y === 2*esize + (esize - 1 - loc.y)) },
+        "v": { newdir: "<", newarea: 3, other: loc => locations.find(b => b.x === esize * 2 - 1 && b.y === loc.x - esize) },
     },
     3: {
-        "^": { newdir: ">", newarea: 1, other: loc => locations.find(b => b.x === edgesize * 2 && b.y === loc.x - edgesize) },
-        "v": { newdir: ">", newarea: 5, other: loc => locations.find(b => b.x === edgesize * 2 && b.y === loc.x + edgesize) },
+        ">": { newdir: "^", newarea: 2, other: loc => locations.find(b => b.x === (loc.y-esize) + 2*esize && b.y === esize-1) },
+        "<": { newdir: "v", newarea: 5, other: loc => locations.find(b => b.x === (loc.y-esize) && b.y === 2*esize) },
     },
     4: {
-        ">": { newdir: "v", newarea: 6, other: loc => locations.find(b => b.x === (edgesize*4-1)-(loc.y - edgesize) && b.y === edgesize * 2) },
+        ">": { newdir: ">", newarea: 2, other: loc => locations.find(b => b.x === (esize*3-1) && b.y === loc.y - 2*esize) },
+        "v": { newdir: "<", newarea: 6, other: loc => locations.find(b => b.x === esize-1 && b.y === 3*esize + (loc.x-esize)) },
     },
     5: {
-        "<": { newdir: "^", newarea: 3, other: loc => locations.find(b => b.x === loc.y - edgesize && b.y === edgesize) },
-        "v": { newdir: "^", newarea: 2, other: loc => locations.find(b => b.x === edgesize - 1 - (loc.x - 2*edgesize) && b.y === edgesize * 2 - 1) },
+        "^": { newdir: ">", newarea: 3, other: loc => locations.find(b => b.x === esize && b.y === loc.x + esize ) },
+        "<": { newdir: ">", newarea: 1, other: loc => locations.find(b => b.x === esize && b.y === esize-1 - (loc.y - 2*esize) ) },
     },
     6: {
-        "^": { newdir: "<", newarea: 4, other: loc => locations.find(b => b.x === edgesize * 3 - 1 && b.y === (loc.x - 3*edgesize) + edgesize) },
-        ">": { newdir: "<", newarea: 1, other: loc => locations.find(b => b.x === edgesize * 3 - 1 && b.y === edgesize - 1 - (loc.y - 2*edgesize)) },
-        "v": { newdir: ">", newarea: 2, other: loc => locations.find(b => b.x === 0 && b.y === (loc.x - 3*edgesize) + edgesize) },
+        ">": { newdir: "^", newarea: 4, other: loc => locations.find(b => b.x === esize + (loc.y - 3*esize) && b.y === esize*3 - 1) },
+        "<": { newdir: "v", newarea: 1, other: loc => locations.find(b => b.x === esize + (loc.y - esize*3) && b.y === 0) },
+        "v": { newdir: "v", newarea: 2, other: loc => locations.find(b => b.x === loc.x + 2*esize && b.y === 0) },
+    },
+};
+
+edgerotationssample = {
+    1: {
+        "<": { newdir: "v", newarea: 3, other: loc => locations.find(b => b.x === esize + loc.y && b.y === esize) },
+        "^": { newdir: "v", newarea: 2, other: loc => locations.find(b => b.x === loc.x - esize*2 && b.y === esize) },
+        ">": { newdir: "<", newarea: 6, other: loc => locations.find(b => b.x === esize * 4 - 1 && b.y === esize * 2 + loc.y) },
+    },
+    2: {
+        "<": { newdir: "^", newarea: 6, other: loc => locations.find(b => b.x === loc.y + 2 * esize && b.y === esize * 2) },
+        "^": { newdir: "v", newarea: 1, other: loc => locations.find(b => b.x === esize * 3 - 1 - loc.x && b.y === 0) },
+        "v": { newdir: "^", newarea: 5, other: loc => locations.find(b => b.x === esize * 3 - 1 - loc.x && b.y === esize * 3 - 1) },
+    },
+    3: {
+        "^": { newdir: ">", newarea: 1, other: loc => locations.find(b => b.x === esize * 2 && b.y === loc.x - esize) },
+        "v": { newdir: ">", newarea: 5, other: loc => locations.find(b => b.x === esize * 2 && b.y === loc.x + esize) },
+    },
+    4: {
+        ">": { newdir: "v", newarea: 6, other: loc => locations.find(b => b.x === (esize*4-1)-(loc.y - esize) && b.y === esize * 2) },
+    },
+    5: {
+        "<": { newdir: "^", newarea: 3, other: loc => locations.find(b => b.x === loc.y - esize && b.y === esize) },
+        "v": { newdir: "^", newarea: 2, other: loc => locations.find(b => b.x === esize - 1 - (loc.x - 2*esize) && b.y === esize * 2 - 1) },
+    },
+    6: {
+        "^": { newdir: "<", newarea: 4, other: loc => locations.find(b => b.x === esize * 3 - 1 && b.y === (loc.x - 3*esize) + esize) },
+        ">": { newdir: "<", newarea: 1, other: loc => locations.find(b => b.x === esize * 3 - 1 && b.y === esize - 1 - (loc.y - 2*esize)) },
+        "v": { newdir: ">", newarea: 2, other: loc => locations.find(b => b.x === 0 && b.y === (loc.x - 3*esize) + esize) },
     },
 };
 
@@ -325,7 +354,7 @@ locations.forEach(location => {
             console.log("Went looking for neighbor from area", location.area, "at", location.x, location.y, "in dir", dir, "   - ", edgerot);
 
             if (!neighbor || !neighbor.loc) throw new Error("Could not even wrap around, found a bug...");
-            if (neighbor.loc.area !== edgerot.newarea) throw new Error("Unexpected area for new neighbor: " + neighbor.area);
+            if (neighbor.loc.area !== edgerot.newarea) throw new Error("Unexpected area for new neighbor: " + neighbor.loc.area + " (expected: " + edgerot.newarea + ")");
         }
 
         location[dir] = neighbor;
