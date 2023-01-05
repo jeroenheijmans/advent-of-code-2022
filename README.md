@@ -36,7 +36,7 @@ Here's something I learned for the various days of advent:
 22. Tiredness can be postponed (to a degree).
 23. Slow can still be good enough.
 24. Being thorough can be rewarding.
-25. Puzzle still TODO!
+25. No code is sometimes best code.
 
 ## Compendium Repositories
 
